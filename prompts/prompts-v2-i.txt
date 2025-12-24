@@ -1,0 +1,603 @@
+# Context(System Prompt)
+You are an excellent requirements analyst. Now you are going to model customer requirements using iStar 2.0. Model the following client requirements in JSON format, 
+ensuring that you follow the iStar2.0 description rules entered.
+
+# iStar Model Generation Prompt (User Prompt):This prompt follows a Chain‑of‑Thought (CoT) format. Please enter each item one at a time, in order.
+# Generate actors
+First describe each actor only. Client requirement: Please provide a goal model for a Meeting Scheduling System.
+This contains actors: Meeting initiator, Meeting participant and Meeting Scheduler.
+
+Detailed client requirements: The primary, high-level goal for the Meeting Initiator is to have the meeting attended by the required participants. The goals of the Meeting Participant are centered around their attendance at the meeting 
+and the convenience of the process. The Meeting Scheduler is a computer-based system designed to take over the task of scheduling from the Meeting Initiator. Its goals are primarily functional, aimed at automating the scheduling 
+process.
+
+
+
+Assume a JSON text that represents a requirement modeling language called iStar2.0 for modeling actors, their intentions, and their relationships. The language supports many types of intentions (goal, quality, task, resource), three types of actors (actor, role, agent), two types of refinement (AND, OR), social relationships, two types of actor association links (participates-in, is-a), and four types of intentional element links (refinement, NeededBy, Contribution, Qualification). The "source" of AND and OR refinement describes the child elements and the "target" describes the parent element.
+Here is an example of the syntax:
+{
+  "actors": [
+    {
+      "id": "dc00b6c0-9c43-49fc-918f-393caad3c1bf",
+      "text": "Participant",
+      "type": "istar.Actor",
+      "x": 443,
+      "y": 25,
+      "customProperties": {
+        "Description": ""
+      },
+      "nodes": [
+        {
+          "id": "5f480ed1-2be2-4da0-a123-e7317f136392",
+          "text": "Attend meeting",
+          "type": "istar.Goal",
+          "x": 606,
+          "y": 98,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "31dcbd1c-430d-4823-a395-97e4f666f48a",
+          "text": "Find date using meeting scheduler",
+          "type": "istar.Task",
+          "x": 514,
+          "y": 187,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "a156b49c-3931-4d0d-93bc-ae77d69d9568",
+          "text": "Find date talking to organizer",
+          "type": "istar.Task",
+          "x": 642,
+          "y": 191,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "b8fdd495-dc69-433f-9d4e-bbb7d614a03e",
+          "text": "Richer medium",
+          "type": "istar.Quality",
+          "x": 443,
+          "y": 125,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "67d45e1a-1201-4d38-b6df-f0416c0ebdc6",
+          "text": "Quality",
+          "type": "istar.Quality",
+          "x": 505,
+          "y": 54,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "1bef6622-0b22-4d12-b1a7-ab4cf14ad15a",
+          "text": "Satisfaction",
+          "type": "istar.Quality",
+          "x": 617,
+          "y": 36,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "5ec9bfc6-5d00-4787-a780-3061959889a8",
+          "text": "Low effort",
+          "type": "istar.Quality",
+          "x": 736,
+          "y": 51,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "b10767b7-2211-40fd-b94c-02d53bf20df1",
+          "text": "Easy to use",
+          "type": "istar.Quality",
+          "x": 744,
+          "y": 123,
+          "customProperties": {
+            "Description": ""
+          }
+        }
+      ]
+    },
+    {
+      "id": "c90b6d45-23bd-4958-9c36-b9d0de349463",
+      "text": "Organizer",
+      "type": "istar.Actor",
+      "x": 31,
+      "y": 26,
+      "customProperties": {
+        "Description": ""
+      },
+      "nodes": [
+        {
+          "id": "c2a2734d-b900-44e1-b8de-4cf7fdabef40",
+          "text": "Organize meeting",
+          "type": "istar.Goal",
+          "x": 123,
+          "y": 38,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "2646af49-6603-4c69-b9b1-9b268d5b79e6",
+          "text": "Schedule meeting manually",
+          "type": "istar.Task",
+          "x": 82,
+          "y": 161,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "4820cb5a-bde0-4060-bdf2-10095ca52e7e",
+          "text": "Let scheduler schedule meeting",
+          "type": "istar.Task",
+          "x": 197,
+          "y": 151,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "b598ce66-ee10-4e98-b7d8-29cc588aa9f4",
+          "text": "Low effort",
+          "type": "istar.Quality",
+          "x": 223,
+          "y": 74,
+          "customProperties": {
+            "Description": ""
+          }
+        },
+        {
+          "id": "0d1b2cc5-54a1-497c-b26a-d5602ce65545",
+          "text": "Quick",
+          "type": "istar.Quality",
+          "x": 37,
+          "y": 93,
+          "customProperties": {
+            "Description": ""
+          }
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "46fe5f83-68cb-4c3e-bf2b-7556346f70e2",
+      "text": "Meeting date",
+      "type": "istar.Resource",
+      "x": 342,
+      "y": 170,
+      "customProperties": {
+        "Description": ""
+      },
+      "source": "31dcbd1c-430d-4823-a395-97e4f666f48a",
+      "target": "4820cb5a-bde0-4060-bdf2-10095ca52e7e"
+    },
+    {
+      "id": "389e074d-a6bd-443b-a7bb-8a49c40abfb3",
+      "text": "Meeting date",
+      "type": "istar.Resource",
+      "x": 344,
+      "y": 226,
+      "customProperties": {
+        "Description": ""
+      },
+      "source": "a156b49c-3931-4d0d-93bc-ae77d69d9568",
+      "target": "2646af49-6603-4c69-b9b1-9b268d5b79e6"
+    }
+  ],
+  "links": [
+    {
+      "id": "1360b44d-5c6d-4c06-bed8-9f6cf755f1cc",
+      "type": "istar.DependencyLink",
+      "source": "389e074d-a6bd-443b-a7bb-8a49c40abfb3",
+      "target": "2646af49-6603-4c69-b9b1-9b268d5b79e6"
+    },
+    {
+      "id": "0e545118-6b9a-41a9-9675-8e6cd5585c64",
+      "type": "istar.DependencyLink",
+      "source": "a156b49c-3931-4d0d-93bc-ae77d69d9568",
+      "target": "389e074d-a6bd-443b-a7bb-8a49c40abfb3"
+    },
+    {
+      "id": "af4810bc-09c2-4a9a-b4f2-c832700f5629",
+      "type": "istar.DependencyLink",
+      "source": "46fe5f83-68cb-4c3e-bf2b-7556346f70e2",
+      "target": "4820cb5a-bde0-4060-bdf2-10095ca52e7e"
+    },
+    {
+      "id": "b96fafe0-53ab-4f75-a1ba-15f775f5489f",
+      "type": "istar.DependencyLink",
+      "source": "31dcbd1c-430d-4823-a395-97e4f666f48a",
+      "target": "46fe5f83-68cb-4c3e-bf2b-7556346f70e2"
+    },
+    {
+      "id": "a6c75db0-0229-440f-8875-375a7f02d94e",
+      "type": "istar.OrRefinementLink",
+      "source": "2646af49-6603-4c69-b9b1-9b268d5b79e6",
+      "target": "c2a2734d-b900-44e1-b8de-4cf7fdabef40"
+    },
+    {
+      "id": "9a814eac-ae57-452c-a10c-ad30b2c626d1",
+      "type": "istar.OrRefinementLink",
+      "source": "4820cb5a-bde0-4060-bdf2-10095ca52e7e",
+      "target": "c2a2734d-b900-44e1-b8de-4cf7fdabef40"
+    },
+    {
+      "id": "2312f673-a4e9-4f81-bcfc-fecdb9be6ba9",
+      "type": "istar.ContributionLink",
+      "source": "2646af49-6603-4c69-b9b1-9b268d5b79e6",
+      "target": "0d1b2cc5-54a1-497c-b26a-d5602ce65545",
+      "label": "hurt"
+    },
+    {
+      "id": "48a33b02-e197-4258-96c5-1ceb95e71dc8",
+      "type": "istar.ContributionLink",
+      "source": "2646af49-6603-4c69-b9b1-9b268d5b79e6",
+      "target": "b598ce66-ee10-4e98-b7d8-29cc588aa9f4",
+      "label": "hurt"
+    },
+    {
+      "id": "0b3e7f68-a978-450d-9eee-b6b17935a22e",
+      "type": "istar.ContributionLink",
+      "source": "4820cb5a-bde0-4060-bdf2-10095ca52e7e",
+      "target": "0d1b2cc5-54a1-497c-b26a-d5602ce65545",
+      "label": "make"
+    },
+    {
+      "id": "7d5f86e9-e06c-4835-bfb2-9809f6988739",
+      "type": "istar.ContributionLink",
+      "source": "4820cb5a-bde0-4060-bdf2-10095ca52e7e",
+      "target": "b598ce66-ee10-4e98-b7d8-29cc588aa9f4",
+      "label": "make"
+    },
+    {
+      "id": "09ebaacc-560f-4077-9539-80d98ccafdff",
+      "type": "istar.OrRefinementLink",
+      "source": "31dcbd1c-430d-4823-a395-97e4f666f48a",
+      "target": "5f480ed1-2be2-4da0-a123-e7317f136392"
+    },
+    {
+      "id": "24d7e58d-0b6e-4fcb-a9f8-2c0dc3b24ea5",
+      "type": "istar.OrRefinementLink",
+      "source": "a156b49c-3931-4d0d-93bc-ae77d69d9568",
+      "target": "5f480ed1-2be2-4da0-a123-e7317f136392"
+    },
+    {
+      "id": "705ad762-daa8-4ca3-9af6-4496d933d573",
+      "type": "istar.ContributionLink",
+      "source": "a156b49c-3931-4d0d-93bc-ae77d69d9568",
+      "target": "b10767b7-2211-40fd-b94c-02d53bf20df1",
+      "label": "make"
+    },
+    {
+      "id": "105f0b4a-b210-4c8f-bbc3-5b5e0f3c8f5f",
+      "type": "istar.ContributionLink",
+      "source": "b10767b7-2211-40fd-b94c-02d53bf20df1",
+      "target": "5ec9bfc6-5d00-4787-a780-3061959889a8",
+      "label": "help"
+    },
+    {
+      "id": "3a147fa0-975c-4507-997e-a3a4ab4cc09e",
+      "type": "istar.ContributionLink",
+      "source": "5ec9bfc6-5d00-4787-a780-3061959889a8",
+      "target": "1bef6622-0b22-4d12-b1a7-ab4cf14ad15a",
+      "label": "help"
+    },
+    {
+      "id": "cd788175-28b1-4cd5-80ef-d576bd1017d3",
+      "type": "istar.ContributionLink",
+      "source": "67d45e1a-1201-4d38-b6df-f0416c0ebdc6",
+      "target": "1bef6622-0b22-4d12-b1a7-ab4cf14ad15a",
+      "label": "help"
+    },
+    {
+      "id": "1f6a63cb-794d-4d89-ab28-82c54e7be02d",
+      "type": "istar.ContributionLink",
+      "source": "b8fdd495-dc69-433f-9d4e-bbb7d614a03e",
+      "target": "67d45e1a-1201-4d38-b6df-f0416c0ebdc6",
+      "label": "help"
+    },
+    {
+      "id": "f5ee74b1-54f1-4e51-a8fe-30a3befd4669",
+      "type": "istar.ContributionLink",
+      "source": "a156b49c-3931-4d0d-93bc-ae77d69d9568",
+      "target": "b8fdd495-dc69-433f-9d4e-bbb7d614a03e",
+      "label": "make"
+    },
+    {
+      "id": "329b3081-dda6-4e23-8924-82c26d27315e",
+      "type": "istar.ContributionLink",
+      "source": "31dcbd1c-430d-4823-a395-97e4f666f48a",
+      "target": "b8fdd495-dc69-433f-9d4e-bbb7d614a03e",
+      "label": "help"
+    },
+    {
+      "id": "6bf59159-0e52-48fb-970b-b06acf0ad8e5",
+      "type": "istar.ContributionLink",
+      "source": "31dcbd1c-430d-4823-a395-97e4f666f48a",
+      "target": "b10767b7-2211-40fd-b94c-02d53bf20df1",
+      "label": "help"
+    }
+  ],
+  "display": {
+    "31dcbd1c-430d-4823-a395-97e4f666f48a": {
+      "width": 116.609375,
+      "height": 46.34375
+    },
+    "a156b49c-3931-4d0d-93bc-ae77d69d9568": {
+      "width": 111.609375,
+      "height": 41.34375
+    },
+    "b8fdd495-dc69-433f-9d4e-bbb7d614a03e": {
+      "width": 85.6348876953125,
+      "height": 41.34803771972656
+    },
+    "67d45e1a-1201-4d38-b6df-f0416c0ebdc6": {
+      "width": 68.63006591796875,
+      "height": 39.347930908203125
+    },
+    "1bef6622-0b22-4d12-b1a7-ab4cf14ad15a": {
+      "width": 78.63275146484375,
+      "height": 39.34782409667969
+    },
+    "5ec9bfc6-5d00-4787-a780-3061959889a8": {
+      "width": 77.63275146484375,
+      "height": 40.34782409667969
+    },
+    "b10767b7-2211-40fd-b94c-02d53bf20df1": {
+      "width": 81.6336669921875,
+      "height": 39.95726013183594
+    },
+    "b598ce66-ee10-4e98-b7d8-29cc588aa9f4": {
+      "width": 80.6336669921875,
+      "height": 44.348236083984375
+    },
+    "0d1b2cc5-54a1-497c-b26a-d5602ce65545": {
+      "width": 74.63216781616211,
+      "height": 34.34730529785156
+    },
+    "0e545118-6b9a-41a9-9675-8e6cd5585c64": {
+      "vertices": [
+        {
+          "x": 552,
+          "y": 254
+        }
+      ]
+    },
+    "af4810bc-09c2-4a9a-b4f2-c832700f5629": {
+      "vertices": [
+        {
+          "x": 342,
+          "y": 186
+        }
+      ]
+    },
+    "2312f673-a4e9-4f81-bcfc-fecdb9be6ba9": {
+      "vertices": [
+        {
+          "x": 108,
+          "y": 150
+        }
+      ]
+    },
+    "48a33b02-e197-4258-96c5-1ceb95e71dc8": {
+      "vertices": [
+        {
+          "x": 184,
+          "y": 150
+        },
+        {
+          "x": 189,
+          "y": 146
+        }
+      ]
+    },
+    "0b3e7f68-a978-450d-9eee-b6b17935a22e": {
+      "vertices": [
+        {
+          "x": 169,
+          "y": 112
+        },
+        {
+          "x": 124,
+          "y": 106
+        }
+      ]
+    },
+    "7d5f86e9-e06c-4835-bfb2-9809f6988739": {
+      "vertices": [
+        {
+          "x": 256,
+          "y": 126
+        }
+      ]
+    },
+    "705ad762-daa8-4ca3-9af6-4496d933d573": {
+      "vertices": [
+        {
+          "x": 744,
+          "y": 185
+        },
+        {
+          "x": 750,
+          "y": 182
+        }
+      ]
+    },
+    "1f6a63cb-794d-4d89-ab28-82c54e7be02d": {
+      "vertices": [
+        {
+          "x": 512,
+          "y": 112
+        }
+      ]
+    },
+    "f5ee74b1-54f1-4e51-a8fe-30a3befd4669": {
+      "vertices": [
+        {
+          "x": 608,
+          "y": 170
+        }
+      ]
+    },
+    "329b3081-dda6-4e23-8924-82c26d27315e": {
+      "vertices": [
+        {
+          "x": 527,
+          "y": 180
+        }
+      ]
+    },
+    "6bf59159-0e52-48fb-970b-b06acf0ad8e5": {
+      "vertices": [
+        {
+          "x": 708,
+          "y": 162
+        },
+        {
+          "x": 724,
+          "y": 159
+        }
+      ]
+    }
+  },
+  "tool": "pistar.2.1.0",
+  "istar": "2.0",
+  "saveDate": "Tue, 02 May 2023 09:46:34 GMT",
+  "diagram": {
+    "width": 1000,
+    "height": 700,
+    "name": "Welcome Model",
+    "customProperties": {
+      "Description": "Welcome to the piStar tool version 2.1.0, released on November, 2021! This model describes some of the recent improvements in the tool. Click on the purple elements for further info.\n\nFor help using this tool, please check the Help menu above"
+    }
+  }
+}
+
+
+# Generate dependency goals
+Next, in the dependency, describe only the goals that each actor wants for the other actors and
+add them to the JSON as described above. Do not describe goals in nodes within each actor.
+Note that the source and target of the dependency is the one requesting the dependency element
+as the source and the one providing the dependency element as the target.
+Note: Ensure that the ”source” and ”target” belong to different actors. Dependencies within
+the same actor are not allowed.
+Description Rules for Dependency Links:
+Rule1:The type of dependencies can only be one of the following: iStar.Goal, iStar.Task, iStar.Resource, or iStar.Quality.
+
+# Generate goals within actors
+Next, within each actor, describe the goals necessary to achieve the dependent goals, as well as
+any domain-specific goals derived from the client’s detailed requirements.
+
+# Generate tasks within actors
+Next, Identify and create the iStar.Tasks required to achieve the iStar.Goals within each actor’s
+node, and connect the created tasks to the parent iStar.Goal using either AND Refinement Links
+or OR Refinement Links. The connections made with AND Refinement Links and OR Refinement Links between iStar.Goals and iStar.Tasks must strictly adhere to the Link Description
+Rules.
+When creating an iStar.Task, follow these steps as a reference.
+Step 1: Create the iStar.Task.
+Step 2: Link the iStar.Task to an iStar.Goal.
+Link Description Rules for iStar.Task：
+Rule 1:AND Refinement starts from Task with the arrowhead pointing to Goal.
+Rule 2:OR Refinement starts from Task with the arrowhead pointing to Goal.
+Rule 3:AND Refinement starts from Task with the arrowhead pointing to Task.
+Rule 4:OR Refinement starts from Task with the arrowhead pointing to Task.
+Rule 5:The source and target of an AND-refinement link must pertain to the same actor.
+Rule 6:You cannot mix AND-refinements with OR-refinements targeting the same element.
+Rule 7:The source and target of an OR-refinement link must pertain to the same actor.
+
+# Generate resources within actors
+Next, Create the iStar.Resources required for the iStar.Tasks within each actor’s node, and
+connect the created iStar.Resources to their respective iStar.Tasks using Needed-by Links. There
+is no need to consider iStar.Resource for an iStar.Goal. When creating an iStar.Resource, follow
+these steps as a reference. The connections made with Needed-by Links between iStar.Tasks and
+iStar.Resources must adhere to the Link Description Rules for iStar.Resource.
+Step 1: Create the iStar.Resource.
+Step 2: Link the iStar.Resource to an iStar.Task.
+Link Description Rules for iStar.Resource：
+Rule 1:The source of a NeededBy can only be set to an iStar.Resource, and the target can only
+be set to an iStar.Task.
+Rule 2:The source and target of a Needed-By link must pertain to the same actor.
+Rule 3:iStar.Goal and iStar.Resource must not be connected using a Needed-by link. If you want
+to connect an iStar.Resource to an iStar.Goal using a Needed-by link, first create an iStar.Task
+as a child element of the iStar.Goal you want to connect. Then, connect the newly created
+iStar.Task to the iStar.Goal using an AndRefinementLink or OrRefinementLink. After that,
+connect the newly created iStar.Task and the iStar.Resource using a Needed-by link.
+Rule 4:Create the iStar.Resource only for iStar.Tasks and not directly for iStar.Goals.
+Rule 5:Always create an iStar.Task before connecting a Resource to a Goal.
+
+# Generate qualities within actors
+Next, Identify the necessary non-functional requirements from the client’s detailed requirements
+and create them as iStar.Quality. Place the created iStar.Quality within the node of the actor containing the related elements, and connect it to the relevant elements using either an
+iStar.Qualification Link or an iStar.Contribution Link. When using an iStar.Contribution Link,
+ensure that the ”label” is specified and contains one of the following: Make, Help, Hurt, or
+Break. Note that for links related to iStar.Quality, the iStar.Quality element must always be the
+target. Connections between iStar.Quality and the relevant elements using iStar.Qualification
+Links or iStar.Contribution Links must strictly adhere to the following Link Description Rules.
+Link Description Rules for iStar.Quality：
+Rule 1:Qualification starts from Quality with the arrowhead pointing to Quality in the actor.
+Rule 2:Contribution starts from Quality with the arrowhead pointing to Goal in the actor.
+Rule 3:Qualification starts from Quality with the arrowhead pointing to Task in the actor.
+Rule 4:Qualification starts from Quality with the arrowhead pointing to Resource in the actor.
+Rule 5:Contribution starts from Task with the arrowhead pointing to Quality in the actor.
+Rule 6:Contribution starts from Resource with the arrowhead pointing to Quality in the actor.
+Rule 7:Contribution Links must have four types (Make, Help, Hurt, Break) and are described
+in the “label” tag in the JSON text. If an element is considered to contribute sufficiently to a
+certain quality, “Make” is used. If an element is considered to contribute weakly to a certain
+quality, “Help” is described. Hurt is used when an element weakly negates a certain quality.
+Break is used when an element sufficiently negates a certain quality. (For example, ”type”:
+”istar.ContributionLink”, ”source”: ”Agency buys tickets(3.8)”, ”target”: ”Minimal own payments(3.13)”, ”label”: ”help” )
+Rule 8:The source and target of a Contribution link must pertain to the same actor.
+Rule 9:The source and target of a Qualification link must pertain to the same actor.
+
+# Generate root goals within actors
+These instructions apply to the elements (iStar.Goal, iStar.Task) within the actor’s node, and no
+transformation should be applied to the actor itself (iStar.Actor), such as its ”text”. Within the
+node of an actor, if there are multiple root elements (iStar.Goal, iStar.Task), create a new goal
+that acts as the parent element for all these root elements. Link all existing root elements to this
+new parent goal appropriately. When linking the new parent element with the root elements,
+adhere to the following Link Description Rules.
+Link Description Rules:
+Rule 1:AND Refinement starts from Task with the arrowhead pointing to Goal.
+Rule 2:OR Refinement starts from Task with the arrowhead pointing to Goal.
+Rule 3:AND Refinement starts from Task with the arrowhead pointing to Task.
+Rule 4:OR Refinement starts from Task with the arrowhead pointing to Task.
+Rule 5:The source and target of an AND-refinement link must pertain to the same actor.
+Rule 6:You cannot mix AND-refinements with OR-refinements targeting the same element.
+Rule 7:The source and target of an OR-refinement link must pertain to the same actor.
+
+# Modify the dependency’s sources and targets to reside within actors
+Next, change the source and target of the dependency to nodes within the actor, clarifying the
+dependency. Modify the source of the dependency to an appropriate leaf element within the
+actor currently set as the source. A leaf element refers to an element that has never been set as
+the target of an AndRefinementLink or OrRefinementLink. Adjust the target of the dependency
+to an appropriate node element within the actor currently set as the target. The configuration
+of the source and target of the dependency must follow the Description Rules for Dependency
+Links.
+Note: Ensure that the ”source” and ”target” belong to different actors. Dependencies within
+the same actor are not allowed.
+Description Rules for Dependency Links:
+Rule1:Elements set as targets in AND Refinement and OR Refinement cannot be sources in
+Dependency Links.
+Rule2:The source and target of a Dependency link must not pertain to the same actor.
+An incorrect example of Rule 2:
+"dependencies": [{ "text": "Dependency", "type": "istar.Goal",
+"source": "Node B of Actor A(n1.3)", "target": "Node C of Actor A(n1.1)" },]
+Rule3:The type of dependencies can only be one of the following: iStar.Goal, iStar.Task, iStar.Resource, or iStar.Quality.
+Ensure that the source actor id and target actor id in each dependency are different.
+A dependency between the same actor is invalid.
+
