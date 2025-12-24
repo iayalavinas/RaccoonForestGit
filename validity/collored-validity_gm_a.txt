@@ -1,0 +1,287 @@
+{
+  "actors": [
+    {
+      "id": "dc00b6c0-9c43-49fc-918f-393caad3c1bf",
+      "text": "System User",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 100,
+      "customProperties": {
+        "Description": "Legitimate users of the ERP system, including employees, managers, and administrators, who rely on the system for business operations.",
+		    "satLevel": 100
+      },
+      "nodes": [
+        {
+          "id": "goalParent1",
+          "text": "Ensure secure system usage",
+          "type": "istar.Goal",
+          "x": 100,
+          "y": 50,
+          "customProperties": {
+            "Description": "Ensure that the system is used securely by legitimate users.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal1",
+          "text": "Follow security protocols",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 150,
+          "customProperties": {
+            "Description": "Ensure that users follow security protocols to prevent unauthorized access.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal2",
+          "text": "Authenticate securely",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 200,
+          "customProperties": {
+            "Description": "Authenticate securely to access the ERP system.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task1",
+          "text": "Use strong passwords",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 150,
+          "customProperties": {
+            "Description": "Ensure that users create and use strong passwords.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task2",
+          "text": "Enable two-factor authentication",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 200,
+          "customProperties": {
+            "Description": "Enable two-factor authentication for secure access.",
+		    "satLevel": 100
+          }
+        }
+      ]
+    },
+    {
+      "id": "c90b6d45-23bd-4958-9c36-b9d0de349463",
+      "text": "Attacker",
+      "type": "istar.Actor",
+      "x": 300,
+      "y": 100,
+      "customProperties": {
+        "Description": "A malicious entity attempting to exploit vulnerabilities in the ERP system for unauthorized access or data breaches.",
+		    "satLevel": 66
+      },
+      "nodes": [
+        {
+          "id": "goalParent2",
+          "text": "Compromise system security",
+          "type": "istar.Goal",
+          "x": 300,
+          "y": 50,
+          "customProperties": {
+            "Description": "Compromise the security of the ERP system.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal3",
+          "text": "Identify vulnerabilities",
+          "type": "istar.Goal",
+          "x": 350,
+          "y": 150,
+          "customProperties": {
+            "Description": "Identify weaknesses in the ERP system to exploit.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal4",
+          "text": "Gain unauthorized access",
+          "type": "istar.Goal",
+          "x": 350,
+          "y": 200,
+          "customProperties": {
+            "Description": "Gain unauthorized access to sensitive data or system functionality.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task3",
+          "text": "Perform phishing attacks",
+          "type": "istar.Task",
+          "x": 400,
+          "y": 150,
+          "customProperties": {
+            "Description": "Conduct phishing attacks to obtain user credentials.",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task4",
+          "text": "Scan for system vulnerabilities",
+          "type": "istar.Task",
+          "x": 400,
+          "y": 200,
+          "customProperties": {
+            "Description": "Scan the ERP system for known vulnerabilities.",
+		    "satLevel": 98
+          }
+        }
+      ]
+    },
+    {
+      "id": "a12b6d45-45bd-4958-9c36-b9d0de349463",
+      "text": "ERP System",
+      "type": "istar.Actor",
+      "x": 500,
+      "y": 100,
+      "customProperties": {
+        "Description": "The ERP system that secures the business operations.",
+		    "satLevel": 0
+      },
+      "nodes": [
+        {
+          "id": "goalParent3",
+          "text": "Ensure system security and reliability",
+          "type": "istar.Goal",
+          "x": 500,
+          "y": 50,
+          "customProperties": {
+            "Description": "Ensure the ERP system is secure and reliable.",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal5",
+          "text": "Implement access controls",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 150,
+          "customProperties": {
+            "Description": "Implement robust access controls to secure the system.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal6",
+          "text": "Monitor system activity",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 200,
+          "customProperties": {
+            "Description": "Monitor system activity to detect and prevent unauthorized access.",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal7",
+          "text": "Ensure data integrity",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 250,
+          "customProperties": {
+            "Description": "Ensure the integrity of data stored and processed in the ERP system.",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task5",
+          "text": "Define user roles and permissions",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 150,
+          "customProperties": {
+            "Description": "Define user roles and permissions to control access.",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task6",
+          "text": "Set up intrusion detection",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 200,
+          "customProperties": {
+            "Description": "Set up intrusion detection systems to monitor activity.",
+		    "satLevel": 0
+          }
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "dep1",
+      "text": "Ensure secure access",
+      "type": "istar.Task",
+      "source": "task1",
+      "target": "goal5"
+    },
+    {
+      "id": "dep2",
+      "text": "Exploit vulnerabilities",
+      "type": "istar.Task",
+      "source": "task3",
+      "target": "goal6"
+    },
+    {
+      "id": "dep3",
+      "text": "Prevent unauthorized access",
+      "type": "istar.Task",
+      "source": "task5",
+      "target": "goal1"
+    }
+  ],
+  "links": [
+    {
+      "id": "link1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal1",
+      "target": "goalParent1"
+    },
+    {
+      "id": "link2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal2",
+      "target": "goalParent1"
+    },
+    {
+      "id": "link3",
+      "type": "istar.AndRefinementLink",
+      "source": "goal3",
+      "target": "goalParent2"
+    },
+    {
+      "id": "link4",
+      "type": "istar.AndRefinementLink",
+      "source": "goal4",
+      "target": "goalParent2"
+    },
+    {
+      "id": "link5",
+      "type": "istar.AndRefinementLink",
+      "source": "goal5",
+      "target": "goalParent3"
+    },
+    {
+      "id": "link6",
+      "type": "istar.AndRefinementLink",
+      "source": "goal6",
+      "target": "goalParent3"
+    },
+    {
+      "id": "link7",
+      "type": "istar.AndRefinementLink",
+      "source": "goal7",
+      "target": "goalParent3"
+    }
+  ]
+}
+

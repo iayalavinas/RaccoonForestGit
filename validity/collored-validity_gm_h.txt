@@ -1,0 +1,303 @@
+{
+  "istar": "2.0",
+  "actors": [
+    {
+      "id": "employee-actor",
+      "text": "Employee",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "goal-emp-purchase",
+          "text": "Purchase Products",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 150
+        },
+        {
+          "id": "task-emp-info",
+          "text": "Obtain Information for Purchasing",
+          "type": "istar.Task",
+          "x": 300,
+          "y": 250
+        },
+        {
+          "id": "task-emp-payment",
+          "text": "Select Payment Method",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 250
+        },
+        {
+          "id": "task-emp-register",
+          "text": "Complete Membership Registration",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 250
+        }
+      ]
+    },
+    {
+      "id": "personnel-dept-actor",
+      "text": "Personnel Department",
+      "type": "istar.Actor",
+      "x": 50,
+      "y": 400,
+      "nodes": [
+        {
+          "id": "goal-pd-maintain",
+          "text": "Maintain Employee Eligibility",
+          "type": "istar.Goal",
+          "x": 100,
+          "y": 500
+        },
+        {
+          "id": "task-pd-check",
+          "text": "Check Employee Eligibility",
+          "type": "istar.Task",
+          "x": 100,
+          "y": 600
+        }
+      ]
+    },
+    {
+      "id": "shipping-dept-actor",
+      "text": "Shipping Department",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 750,
+      "nodes": [
+        {
+          "id": "goal-sd-maintain",
+          "text": "Maintain Product Shipped",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 850
+        },
+        {
+          "id": "task-sd-achieve",
+          "text": "Achieve Product Shipped",
+          "type": "istar.Task",
+          "x": 300,
+          "y": 950
+        },
+        {
+          "id": "task-sd-check",
+          "text": "Check Product Shipped",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 950
+        }
+      ]
+    },
+    {
+      "id": "warehouse-actor",
+      "text": "Warehouse",
+      "type": "istar.Actor",
+      "x": 750,
+      "y": 400,
+      "nodes": [
+        {
+          "id": "goal-wh-maintain",
+          "text": "Maintain Product Availability",
+          "type": "istar.Goal",
+          "x": 800,
+          "y": 500
+        },
+        {
+          "id": "task-wh-manage",
+          "text": "Manage Inventory",
+          "type": "istar.Task",
+          "x": 800,
+          "y": 600
+        }
+      ]
+    },
+    {
+      "id": "ecommerce-app-actor",
+      "text": "Electronic Commerce Application",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 400,
+      "nodes": [
+        {
+          "id": "goal-app-main",
+          "text": "Manage E-Commerce Operations",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 350
+        },
+        {
+          "id": "quality-app-privacy",
+          "text": "Employee Privacy",
+          "type": "istar.Quality",
+          "x": 450,
+          "y": 500
+        },
+        {
+          "id": "goal-app-payment",
+          "text": "Process Payments",
+          "type": "istar.Goal",
+          "x": 300,
+          "y": 500
+        },
+        {
+          "id": "goal-app-membership",
+          "text": "Process Memberships",
+          "type": "istar.Goal",
+          "x": 600,
+          "y": 500
+        },
+        {
+          "id": "quality-app-security",
+          "text": "System Security",
+          "type": "istar.Quality",
+          "x": 450,
+          "y": 600
+        },
+        {
+          "id": "goal-app-info",
+          "text": "Provide Information",
+          "type": "istar.Goal",
+          "x": 300,
+          "y": 600
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "dep-emp-app-payment",
+      "text": "Payments Processed",
+      "type": "istar.Goal",
+      "source": "task-emp-payment",
+      "target": "goal-app-payment"
+    },
+    {
+      "id": "dep-emp-app-membership",
+      "text": "Memberships Processed",
+      "type": "istar.Goal",
+      "source": "task-emp-register",
+      "target": "goal-app-membership"
+    },
+    {
+      "id": "dep-emp-app-info",
+      "text": "Information Provided",
+      "type": "istar.Goal",
+      "source": "task-emp-info",
+      "target": "goal-app-info"
+    },
+    {
+      "id": "dep-app-pd-eligibility",
+      "text": "Employee Eligibility Confirmed",
+      "type": "istar.Goal",
+      "source": "goal-app-main",
+      "target": "goal-pd-maintain"
+    },
+    {
+      "id": "dep-app-wh-availability",
+      "text": "Product Availability",
+      "type": "istar.Resource",
+      "source": "goal-app-main",
+      "target": "goal-wh-maintain"
+    },
+    {
+      "id": "dep-app-sd-shipped",
+      "text": "Product Shipped",
+      "type": "istar.Goal",
+      "source": "goal-app-main",
+      "target": "goal-sd-maintain"
+    }
+  ],
+  "links": [
+    {
+      "id": "ref-emp-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-emp-info",
+      "target": "goal-emp-purchase"
+    },
+    {
+      "id": "ref-emp-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-emp-payment",
+      "target": "goal-emp-purchase"
+    },
+    {
+      "id": "ref-emp-3",
+      "type": "istar.AndRefinementLink",
+      "source": "task-emp-register",
+      "target": "goal-emp-purchase"
+    },
+    {
+      "id": "ref-pd-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-pd-check",
+      "target": "goal-pd-maintain"
+    },
+    {
+      "id": "ref-sd-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-sd-achieve",
+      "target": "goal-sd-maintain"
+    },
+    {
+      "id": "ref-sd-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-sd-check",
+      "target": "goal-sd-maintain"
+    },
+    {
+      "id": "ref-wh-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-wh-manage",
+      "target": "goal-wh-maintain"
+    },
+    {
+      "id": "contrib-app-payment-security",
+      "type": "istar.ContributionLink",
+      "source": "goal-app-payment",
+      "target": "quality-app-security",
+      "label": "make"
+    },
+    {
+      "id": "contrib-app-membership-security",
+      "type": "istar.ContributionLink",
+      "source": "goal-app-membership",
+      "target": "quality-app-security",
+      "label": "make"
+    },
+    {
+      "id": "contrib-app-membership-privacy",
+      "type": "istar.ContributionLink",
+      "source": "goal-app-membership",
+      "target": "quality-app-privacy",
+      "label": "make"
+    },
+    {
+      "id": "ref-app-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-app-payment",
+      "target": "goal-app-main"
+    },
+    {
+      "id": "ref-app-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-app-membership",
+      "target": "goal-app-main"
+    },
+    {
+      "id": "ref-app-3",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-app-info",
+      "target": "goal-app-main"
+    }
+  ],
+  "diagram": {
+    "width": 1200,
+    "height": 1100,
+    "name": "Intranet E-Commerce - Final Model"
+  }
+}
+

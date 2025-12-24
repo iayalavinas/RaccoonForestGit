@@ -1,0 +1,92 @@
+features
+    DiverCare
+        mandatory
+           "Emergency Call System"
+                or
+                    Smartphone
+                    "Emergency button"
+                    "Fall detection System"
+            "Caregiver interface"
+                mandatory
+                    Platform
+                        or
+                            Web
+                            App
+                    "Alarm system"
+                        or
+                            "Operator call"
+                            "Phone-alarm"
+                optional
+                    Information
+                        alternative
+                            "User Activity Level"
+                            "User DLA"
+        optional
+            "Wearable sensors"
+                or
+                    "Hip accelerometer"
+                        mandatory
+                            Integer HipAccuracy
+                    "Chest accelerometer"
+                        mandatory
+                            Integer ChestAccuracy
+                    Pedometer
+                    Cane
+                    Rollator
+            "Home Equipment"
+                or
+                    Stairlift
+                    "Automatic door" cardinality [0..2]
+                        or
+                            "Automatic lock"
+                            "Automatic opening-closure" 
+            "Activity Monitoring"
+                optional
+                    "Health reminders"
+                alternative
+                    "Activity level"
+                    "Daily living activities"
+                        mandatory
+                            "Motion detector" cardinality [1..10] 
+                                mandatory
+                                    Room
+                                        or
+                                            Kitchen
+                                            Bedroom
+                                            Bathroom
+                                            "Home entrance"
+                                            "Living room"
+                                    "Sensor technology"
+                                        or
+                                            PIR
+                                            Microwave
+                                            Ultrasonic
+                                            Video
+                            Cloud
+                                alternative
+                                    Public
+                                    Private
+       
+            "Home Gateway"
+                mandatory
+                    Device
+                        alternative
+                            "Raspberry Pi"
+                            "Multiprotocol router"
+                    Network
+                        or
+                            Bluetooth
+                            ZigBee
+                            WiFi
+                    
+constraints
+    ("Emergency button" | Video | "Automatic door") => "Home Gateway"
+    "Fall detection System" => ("Hip accelerometer" | "Chest accelerometer")
+    "Phone-alarm" => App
+    100>HipAccuracy
+    HipAccuracy>0
+    100>ChestAccuracy
+    ChestAccuracy>0
+    (PIR | Microwave | Ultrasonic) => "Home Gateway"
+	//"User Activity Level"  => "Activity level"
+   // "User DLA" => "Daily living activities"

@@ -1,0 +1,9 @@
+resource-startup-3=100*_r_3_5_39_42
+goal-startup-1=100*_r_3_6_50_52
+resource-startup-1=100*_r_3_5_39_42
+resource-startup-2=100*_r_3_8_59_60
+goal-startup-parent=100*_r_3_4_30_32
+task-startup-2=100*_r_3_5_39_40
+goal-startup-2=100*_r_3_6_50_52
+task-startup-3=100*_r_3_4_30_31
+task-startup-1=100*_r_3_7_54_55

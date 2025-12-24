@@ -1,0 +1,421 @@
+{
+  "actors": [
+    {
+      "id": "cad-actor-id",
+      "text": "Computer-Aided Despatch software (CAD)",
+      "type": "istar.Actor",
+      "x": 50,
+      "y": 50,
+      "customProperties": {
+        "Description": "A software agent that cooperates with AVLS to despatch vehicles.",
+		    "satLevel": 66
+      },
+      "nodes": [
+        {
+          "id": "cad-goal-1",
+          "text": "Despatch Vehicle",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 100
+        },
+        {
+          "id": "cad-task-1",
+          "text": "Send Mobilization Order",
+          "type": "istar.Task",
+          "x": 150,
+          "y": 220
+        },
+        {
+          "id": "cad-resource-1",
+          "text": "Mobilization Order",
+          "type": "istar.Resource",
+          "x": 150,
+          "y": 300
+        },
+        {
+          "id": "cad-quality-1",
+          "text": "Timely Dispatch",
+          "type": "istar.Quality",
+          "x": 300,
+          "y": 160
+        }
+      ]
+    },
+    {
+      "id": "avls-actor-id",
+      "text": "Automatic Vehicle Location System (AVLS)",
+      "type": "istar.Actor",
+      "x": 450,
+      "y": 50,
+      "customProperties": {
+        "Description": "A software agent that provides vehicle location data to the CAD.",
+		    "satLevel": 100
+      },
+      "nodes": [
+        {
+          "id": "avls-goal-1",
+          "text": "Provide Vehicle Location",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 100
+        },
+        {
+          "id": "avls-task-1",
+          "text": "Transmit Location to CAD",
+          "type": "istar.Task",
+          "x": 550,
+          "y": 220
+        },
+        {
+          "id": "avls-resource-1",
+          "text": "Vehicle GPS Data",
+          "type": "istar.Resource",
+          "x": 550,
+          "y": 300
+        },
+        {
+          "id": "avls-quality-1",
+          "text": "High Accuracy",
+          "type": "istar.Quality",
+          "x": 700,
+          "y": 260
+        }
+      ]
+    },
+    {
+      "id": "ra-actor-id",
+      "text": "Resource allocator (RA)",
+      "type": "istar.Actor",
+      "x": 50,
+      "y": 350,
+      "customProperties": {
+        "Description": "A software component responsible for assigning an ambulance to an incident.",
+		    "satLevel": 66
+      },
+      "nodes": [
+        {
+          "id": "ra-goal-1",
+          "text": "Ambulance Allocated",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 400
+        },
+        {
+          "id": "ra-task-1",
+          "text": "Assign Ambulance to Incident",
+          "type": "istar.Task",
+          "x": 150,
+          "y": 520
+        },
+        {
+          "id": "ra-resource-1",
+          "text": "Incident & Vehicle Data",
+          "type": "istar.Resource",
+          "x": 150,
+          "y": 600
+        },
+        {
+          "id": "ra-quality-1",
+          "text": "Efficient Allocation",
+          "type": "istar.Quality",
+          "x": 300,
+          "y": 460
+        }
+      ]
+    },
+    {
+      "id": "ca-actor-id",
+      "text": "Control assistant (CA)",
+      "type": "istar.Actor",
+      "x": 450,
+      "y": 350,
+      "customProperties": {
+        "Description": "The human agent who handles the initial emergency call.",
+		    "satLevel": 100
+      },
+      "nodes": [
+        {
+          "id": "ca-goal-1",
+          "text": "Incident Info Entered",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 400
+        },
+        {
+          "id": "ca-task-1",
+          "text": "Enter Incident Details in System",
+          "type": "istar.Task",
+          "x": 550,
+          "y": 520
+        },
+        {
+          "id": "ca-resource-1",
+          "text": "Emergency Call Information",
+          "type": "istar.Resource",
+          "x": 550,
+          "y": 600
+        },
+        {
+          "id": "ca-quality-1",
+          "text": "Information Accuracy",
+          "type": "istar.Quality",
+          "x": 700,
+          "y": 560
+        }
+      ]
+    },
+    {
+      "id": "ro-actor-id",
+      "text": "Radio operator",
+      "type": "istar.Actor",
+      "x": 50,
+      "y": 650,
+      "nodes": []
+    },
+    {
+      "id": "mdt-actor-id",
+      "text": "Mobile data terminal (MDT)",
+      "type": "istar.Actor",
+      "x": 450,
+      "y": 650,
+      "customProperties": {
+        "Description": "The device in the ambulance used for communication.",
+		    "satLevel": 66
+      },
+      "nodes": [
+        {
+          "id": "mdt-goal-1",
+          "text": "Transmit Status Update",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 700
+        },
+        {
+          "id": "mdt-task-1",
+          "text": "Send Data to Central System",
+          "type": "istar.Task",
+          "x": 550,
+          "y": 820
+        },
+        {
+          "id": "mdt-resource-1",
+          "text": "Status Update Data",
+          "type": "istar.Resource",
+          "x": 550,
+          "y": 900
+        },
+        {
+          "id": "mdt-quality-1",
+          "text": "Reliable Transmission",
+          "type": "istar.Quality",
+          "x": 700,
+          "y": 760
+        }
+      ]
+    },
+    {
+      "id": "ac-actor-id",
+      "text": "Ambulance crew",
+      "type": "istar.Actor",
+      "x": 50,
+      "y": 850,
+      "customProperties": {
+        "Description": "The personnel who operate the ambulance, responding to dispatch instructions and reporting their status.",
+		    "satLevel": 75
+      },
+      "nodes": [
+        {
+          "id": "ac-goal-1",
+          "text": "Respond to Dispatch",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 950
+        },
+        {
+          "id": "ac-goal-2",
+          "text": "Report Status",
+          "type": "istar.Goal",
+          "x": 300,
+          "y": 950
+        },
+        {
+          "id": "ac-task-1",
+          "text": "Acknowledge Instruction",
+          "type": "istar.Task",
+          "x": 100,
+          "y": 1020
+        },
+        {
+          "id": "ac-task-2",
+          "text": "Mobilize Ambulance",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 1020
+        },
+        {
+          "id": "ac-task-3",
+          "text": "Press Status Button on MDT",
+          "type": "istar.Task",
+          "x": 300,
+          "y": 1020
+        },
+        {
+          "id": "ac-resource-1",
+          "text": "Mobilization Instruction",
+          "type": "istar.Resource",
+          "x": 100,
+          "y": 1100
+        },
+        {
+          "id": "ac-resource-2",
+          "text": "MDT Device",
+          "type": "istar.Resource",
+          "x": 300,
+          "y": 1100
+        },
+        {
+          "id": "ac-quality-1",
+          "text": "Usable Interface",
+          "type": "istar.Quality",
+          "x": 450,
+          "y": 1060
+        },
+        {
+          "id": "ac-parent-goal",
+          "text": "Fulfill Crew Duties",
+          "type": "istar.Goal",
+          "x": 225,
+          "y": 870
+        }
+      ]
+    },
+    {
+      "id": "sp-actor-id",
+      "text": "Station Printer",
+      "type": "istar.Actor",
+      "x": 450,
+      "y": 950,
+      "customProperties": {
+        "Description": "The device located at the ambulance station used to print mobilization instructions.",
+		    "satLevel": 66
+      },
+      "nodes": [
+        {
+          "id": "sp-goal-1",
+          "text": "Print Mobilization Instruction",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 1000
+        },
+        {
+          "id": "sp-task-1",
+          "text": "Print Document",
+          "type": "istar.Task",
+          "x": 550,
+          "y": 1120
+        },
+        {
+          "id": "sp-resource-1",
+          "text": "Digital Mobilization Instruction",
+          "type": "istar.Resource",
+          "x": 550,
+          "y": 1200
+        },
+        {
+          "id": "sp-quality-1",
+          "text": "High Reliability",
+          "type": "istar.Quality",
+          "x": 700,
+          "y": 1160
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "dep-ca-ra",
+      "text": "Incident Information",
+      "type": "istar.Resource",
+      "source": "ca-task-1",
+      "target": "ra-resource-1"
+    },
+    {
+      "id": "dep-avls-ra",
+      "text": "Vehicle Location Data",
+      "type": "istar.Resource",
+      "source": "avls-task-1",
+      "target": "ra-resource-1"
+    },
+    {
+      "id": "dep-ra-cad",
+      "text": "Allocated Ambulance",
+      "type": "istar.Goal",
+      "source": "ra-task-1",
+      "target": "cad-goal-1"
+    },
+    {
+      "id": "dep-cad-sp",
+      "text": "Instruction to Print",
+      "type": "istar.Resource",
+      "source": "cad-task-1",
+      "target": "sp-resource-1"
+    },
+    {
+      "id": "dep-cad-ac",
+      "text": "Mobilization Order",
+      "type": "istar.Resource",
+      "source": "cad-task-1",
+      "target": "ac-resource-1"
+    },
+    {
+      "id": "dep-ac-mdt",
+      "text": "Status Update",
+      "type": "istar.Resource",
+      "source": "ac-task-3",
+      "target": "mdt-resource-1"
+    },
+    {
+      "id": "dep-mdt-cad",
+      "text": "Transmitted Status",
+      "type": "istar.Goal",
+      "source": "mdt-task-1",
+      "target": "cad-goal-1"
+    }
+  ],
+  "links": [
+    { "id": "ref-cad-1", "type": "istar.AndRefinementLink", "source": "cad-task-1", "target": "cad-goal-1" },
+    { "id": "ref-avls-1", "type": "istar.AndRefinementLink", "source": "avls-task-1", "target": "avls-goal-1" },
+    { "id": "ref-ra-1", "type": "istar.AndRefinementLink", "source": "ra-task-1", "target": "ra-goal-1" },
+    { "id": "ref-ca-1", "type": "istar.AndRefinementLink", "source": "ca-task-1", "target": "ca-goal-1" },
+    { "id": "ref-mdt-1", "type": "istar.AndRefinementLink", "source": "mdt-task-1", "target": "mdt-goal-1" },
+    { "id": "ref-ac-1", "type": "istar.AndRefinementLink", "source": "ac-task-1", "target": "ac-goal-1" },
+    { "id": "ref-ac-2", "type": "istar.AndRefinementLink", "source": "ac-task-2", "target": "ac-goal-1" },
+    { "id": "ref-ac-3", "type": "istar.AndRefinementLink", "source": "ac-task-3", "target": "ac-goal-2" },
+    { "id": "ref-sp-1", "type": "istar.AndRefinementLink", "source": "sp-task-1", "target": "sp-goal-1" },
+    { "id": "neededby-cad-1", "type": "istar.NeededByLink", "source": "cad-resource-1", "target": "cad-task-1" },
+    { "id": "neededby-avls-1", "type": "istar.NeededByLink", "source": "avls-resource-1", "target": "avls-task-1" },
+    { "id": "neededby-ra-1", "type": "istar.NeededByLink", "source": "ra-resource-1", "target": "ra-task-1" },
+    { "id": "neededby-ca-1", "type": "istar.NeededByLink", "source": "ca-resource-1", "target": "ca-task-1" },
+    { "id": "neededby-mdt-1", "type": "istar.NeededByLink", "source": "mdt-resource-1", "target": "mdt-task-1" },
+    { "id": "neededby-ac-1", "type": "istar.NeededByLink", "source": "ac-resource-1", "target": "ac-task-1" },
+    { "id": "neededby-ac-2", "type": "istar.NeededByLink", "source": "ac-resource-1", "target": "ac-task-2" },
+    { "id": "neededby-ac-3", "type": "istar.NeededByLink", "source": "ac-resource-2", "target": "ac-task-3" },
+    { "id": "neededby-sp-1", "type": "istar.NeededByLink", "source": "sp-resource-1", "target": "sp-task-1" },
+    { "id": "contrib-cad-1", "type": "istar.ContributionLink", "source": "cad-task-1", "target": "cad-quality-1", "label": "Make" },
+    { "id": "qual-avls-1", "type": "istar.QualificationLink", "source": "avls-quality-1", "target": "avls-resource-1" },
+    { "id": "contrib-ra-1", "type": "istar.ContributionLink", "source": "ra-task-1", "target": "ra-quality-1", "label": "Help" },
+    { "id": "qual-ca-1", "type": "istar.QualificationLink", "source": "ca-quality-1", "target": "ca-resource-1" },
+    { "id": "contrib-mdt-1", "type": "istar.ContributionLink", "source": "mdt-task-1", "target": "mdt-quality-1", "label": "Make" },
+    { "id": "qual-ac-1", "type": "istar.QualificationLink", "source": "ac-quality-1", "target": "ac-resource-2" },
+    { "id": "contrib-sp-1", "type": "istar.ContributionLink", "source": "sp-task-1", "target": "sp-quality-1", "label": "Help" },
+    { "id": "ref-ac-parent-1", "type": "istar.AndRefinementLink", "source": "ac-goal-1", "target": "ac-parent-goal" },
+    { "id": "ref-ac-parent-2", "type": "istar.AndRefinementLink", "source": "ac-goal-2", "target": "ac-parent-goal" }
+  ],
+  "diagram": {
+    "width": 1600,
+    "height": 1600,
+    "name": "London Ambulance Service - Corrected Qualification"
+  }
+}
+

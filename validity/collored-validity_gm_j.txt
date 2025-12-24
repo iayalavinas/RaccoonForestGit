@@ -1,0 +1,377 @@
+{
+  "actors": [
+    {
+      "id": "a-user-01",
+      "text": "User",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "g-user-root",
+          "text": "Fulfill User Needs",
+          "type": "istar.Goal",
+          "x": 250,
+          "y": 50
+        },
+        {
+          "id": "g-user-01",
+          "text": "Provide Found Item Details",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 150
+        },
+        {
+          "id": "g-user-02",
+          "text": "Provide Lost Item Details",
+          "type": "istar.Goal",
+          "x": 350,
+          "y": 150
+        },
+        {
+          "id": "g-user-03",
+          "text": "Achieve Item Recovery",
+          "type": "istar.Goal",
+          "x": 250,
+          "y": 250
+        },
+        {
+          "id": "t-user-01",
+          "text": "Use Camera to Report",
+          "type": "istar.Task",
+          "x": 50,
+          "y": 250
+        },
+        {
+          "id": "t-user-02",
+          "text": "Input Item Description",
+          "type": "istar.Task",
+          "x": 250,
+          "y": 350
+        },
+        {
+          "id": "t-user-03",
+          "text": "Announce Loss",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 250
+        },
+        {
+          "id": "q-user-01",
+          "text": "Ease of Use",
+          "type": "istar.Quality",
+          "x": 150,
+          "y": 450
+        }
+      ]
+    },
+    {
+      "id": "a-app-01",
+      "text": "L&F App",
+      "type": "istar.Agent",
+      "x": 600,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "g-app-root",
+          "text": "Fulfill App Service",
+          "type": "istar.Goal",
+          "x": 775,
+          "y": 50
+        },
+        {
+          "id": "g-app-01",
+          "text": "Fulfill Reuniting Goal",
+          "type": "istar.Goal",
+          "x": 700,
+          "y": 150
+        },
+        {
+          "id": "g-app-02",
+          "text": "Fulfill Notification Goal",
+          "type": "istar.Goal",
+          "x": 850,
+          "y": 150
+        },
+        {
+          "id": "g-app-03",
+          "text": "Ensure Location Storage",
+          "type": "istar.Goal",
+          "x": 650,
+          "y": 250
+        },
+        {
+          "id": "g-app-04",
+          "text": "Perform Item Matching",
+          "type": "istar.Goal",
+          "x": 800,
+          "y": 250
+        },
+        {
+          "id": "t-app-01",
+          "text": "Trace and Store Location",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 350
+        },
+        {
+          "id": "t-app-02",
+          "text": "Compare Item Descriptions",
+          "type": "istar.Task",
+          "x": 750,
+          "y": 350
+        },
+        {
+          "id": "t-app-03",
+          "text": "Send Notification",
+          "type": "istar.Task",
+          "x": 900,
+          "y": 350
+        },
+        {
+          "id": "q-app-01",
+          "text": "Data Accuracy",
+          "type": "istar.Quality",
+          "x": 650,
+          "y": 450
+        },
+        {
+          "id": "q-app-02",
+          "text": "Matching Accuracy",
+          "type": "istar.Quality",
+          "x": 850,
+          "y": 450
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "d-01",
+      "text": "Reunite Lost Objects",
+      "type": "istar.Goal",
+      "x": 350,
+      "y": 150,
+      "source": "g-user-03",
+      "target": "g-app-01"
+    },
+    {
+      "id": "d-02",
+      "text": "Send Match Notification",
+      "type": "istar.Goal",
+      "x": 350,
+      "y": 250,
+      "source": "g-user-03",
+      "target": "g-app-02"
+    },
+    {
+      "id": "d-03",
+      "text": "Report Found Item",
+      "type": "istar.Goal",
+      "x": 350,
+      "y": 350,
+      "source": "g-app-01",
+      "target": "t-user-01"
+    },
+    {
+      "id": "d-04",
+      "text": "Announce Lost Item",
+      "type": "istar.Goal",
+      "x": 350,
+      "y": 450,
+      "source": "g-app-01",
+      "target": "t-user-03"
+    }
+  ],
+  "links": [
+    {
+      "id": "l-user-ref-01",
+      "type": "istar.AndRefinementLink",
+      "source": "t-user-01",
+      "target": "g-user-01"
+    },
+    {
+      "id": "l-user-ref-02",
+      "type": "istar.AndRefinementLink",
+      "source": "t-user-02",
+      "target": "g-user-01"
+    },
+    {
+      "id": "l-user-ref-03",
+      "type": "istar.AndRefinementLink",
+      "source": "t-user-03",
+      "target": "g-user-02"
+    },
+    {
+      "id": "l-app-ref-01",
+      "type": "istar.AndRefinementLink",
+      "source": "g-app-03",
+      "target": "g-app-01"
+    },
+    {
+      "id": "l-app-ref-02",
+      "type": "istar.AndRefinementLink",
+      "source": "g-app-04",
+      "target": "g-app-01"
+    },
+    {
+      "id": "l-app-ref-03",
+      "type": "istar.AndRefinementLink",
+      "source": "t-app-01",
+      "target": "g-app-03"
+    },
+    {
+      "id": "l-app-ref-04",
+      "type": "istar.AndRefinementLink",
+      "source": "t-app-02",
+      "target": "g-app-04"
+    },
+    {
+      "id": "l-app-ref-05",
+      "type": "istar.AndRefinementLink",
+      "source": "t-app-03",
+      "target": "g-app-02"
+    },
+    {
+      "id": "l-user-contrib-01",
+      "type": "istar.ContributionLink",
+      "source": "t-user-01",
+      "target": "q-user-01",
+      "label": "make"
+    },
+    {
+      "id": "l-user-contrib-02",
+      "type": "istar.ContributionLink",
+      "source": "t-user-03",
+      "target": "q-user-01",
+      "label": "help"
+    },
+    {
+      "id": "l-app-contrib-01",
+      "type": "istar.ContributionLink",
+      "source": "t-app-01",
+      "target": "q-app-01",
+      "label": "make"
+    },
+    {
+      "id": "l-app-contrib-02",
+      "type": "istar.ContributionLink",
+      "source": "t-app-02",
+      "target": "q-app-02",
+      "label": "make"
+    },
+    {
+      "id": "l-user-root-01",
+      "type": "istar.AndRefinementLink",
+      "source": "g-user-01",
+      "target": "g-user-root"
+    },
+    {
+      "id": "l-user-root-02",
+      "type": "istar.AndRefinementLink",
+      "source": "g-user-02",
+      "target": "g-user-root"
+    },
+    {
+      "id": "l-user-root-03",
+      "type": "istar.AndRefinementLink",
+      "source": "g-user-03",
+      "target": "g-user-root"
+    },
+    {
+      "id": "l-app-root-01",
+      "type": "istar.AndRefinementLink",
+      "source": "g-app-01",
+      "target": "g-app-root"
+    },
+    {
+      "id": "l-app-root-02",
+      "type": "istar.AndRefinementLink",
+      "source": "g-app-02",
+      "target": "g-app-root"
+    }
+  ],
+"display": {
+"g-app-03": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-app-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-app-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-03": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-app-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-app-04": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-user-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-04": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-app-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-app-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-user-03": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-user-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"a-user-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-user-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-app-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-app-03": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-user-root": {
+	 "backgroundColor": "#77FF12 "
+},
+"a-app-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-app-root": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-user-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-user-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-user-03": {
+	 "backgroundColor": "#77FF12 "
+}
+},
+  "istar": "2.0",
+  "saveDate": "2025-01-01T00:00:00Z",
+  "diagram": {
+    "width": 1200,
+    "height": 600,
+    "name": "Lost & Found Mobile App SR Model (Dependencies Refined)"
+  }
+}
+

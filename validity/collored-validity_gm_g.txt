@@ -1,0 +1,404 @@
+{
+  "istar": "2.0",
+  "actors": [
+    {
+      "id": "food-processor-actor",
+      "text": "Food Processor",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 100,
+      "nodes": [
+        {
+          "id": "new-goal-fp-root",
+          "text": "Operate Food Processing Business",
+          "type": "istar.Goal",
+          "x": 220,
+          "y": 20
+        },
+        {
+          "id": "goal-fp-1",
+          "text": "Ensure Food Quality",
+          "type": "istar.Goal",
+          "x": 120,
+          "y": 180
+        },
+        {
+          "id": "goal-fp-2",
+          "text": "Maintain Consumer Trust",
+          "type": "istar.Goal",
+          "x": 420,
+          "y": 180
+        },
+        {
+          "id": "goal-fp-3",
+          "text": "Maximize Profit",
+          "type": "istar.Goal",
+          "x": 220,
+          "y": 450
+        },
+        {
+          "id": "task-fp-1",
+          "text": "Perform Quality Checks",
+          "type": "istar.Task",
+          "x": 50,
+          "y": 300
+        },
+        {
+          "id": "task-fp-2",
+          "text": "Record Quality Data on Blockchain",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 300
+        },
+        {
+          "id": "task-fp-3",
+          "text": "Provide Transparent Food Provenance",
+          "type": "istar.Task",
+          "x": 420,
+          "y": 300
+        },
+        {
+          "id": "task-fp-4",
+          "text": "Sell Processed Food",
+          "type": "istar.Task",
+          "x": 220,
+          "y": 550
+        },
+        {
+          "id": "quality-fp-1",
+          "text": "High Food Quality",
+          "type": "istar.Quality",
+          "x": 120,
+          "y": 50
+        },
+        {
+          "id": "quality-fp-2",
+          "text": "Data Transparency",
+          "type": "istar.Quality",
+          "x": 320,
+          "y": 50
+        },
+        {
+          "id": "quality-fp-3",
+          "text": "Profitability",
+          "type": "istar.Quality",
+          "x": 220,
+          "y": 650
+        }
+      ]
+    },
+    {
+      "id": "distributor-actor",
+      "text": "Distributor",
+      "type": "istar.Actor",
+      "x": 700,
+      "y": 100,
+      "nodes": [
+        {
+          "id": "new-goal-d-root",
+          "text": "Run Distribution Operations",
+          "type": "istar.Goal",
+          "x": 820,
+          "y": 20
+        },
+        {
+          "id": "goal-d-1",
+          "text": "Ensure Timely Delivery",
+          "type": "istar.Goal",
+          "x": 720,
+          "y": 180
+        },
+        {
+          "id": "goal-d-2",
+          "text": "Maximize Profit",
+          "type": "istar.Goal",
+          "x": 920,
+          "y": 180
+        },
+        {
+          "id": "task-d-1",
+          "text": "Transport Food",
+          "type": "istar.Task",
+          "x": 650,
+          "y": 300
+        },
+        {
+          "id": "task-d-2",
+          "text": "Update Delivery Status on Blockchain",
+          "type": "istar.Task",
+          "x": 800,
+          "y": 300
+        },
+        {
+          "id": "task-d-3",
+          "text": "Bill Retailer",
+          "type": "istar.Task",
+          "x": 920,
+          "y": 400
+        },
+        {
+          "id": "quality-d-1",
+          "text": "Timeliness",
+          "type": "istar.Quality",
+          "x": 720,
+          "y": 50
+        },
+        {
+          "id": "quality-d-2",
+          "text": "Profitability",
+          "type": "istar.Quality",
+          "x": 920,
+          "y": 500
+        }
+      ]
+    },
+    {
+      "id": "regulatory-authority-actor",
+      "text": "Regulatory Authority",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 700,
+      "nodes": [
+        {
+          "id": "new-goal-ra-root",
+          "text": "Uphold Food Chain Integrity",
+          "type": "istar.Goal",
+          "x": 570,
+          "y": 680
+        },
+        {
+          "id": "goal-ra-1",
+          "text": "Ensure Food Quality Standards",
+          "type": "istar.Goal",
+          "x": 420,
+          "y": 780
+        },
+        {
+          "id": "goal-ra-2",
+          "text": "Prevent Data Tampering",
+          "type": "istar.Goal",
+          "x": 720,
+          "y": 780
+        },
+        {
+          "id": "task-ra-1",
+          "text": "Monitor Quality Data on Blockchain",
+          "type": "istar.Task",
+          "x": 420,
+          "y": 900
+        },
+        {
+          "id": "task-ra-2",
+          "text": "Audit Processor Records",
+          "type": "istar.Task",
+          "x": 720,
+          "y": 900
+        },
+        {
+          "id": "quality-ra-1",
+          "text": "Compliance",
+          "type": "istar.Quality",
+          "x": 420,
+          "y": 1000
+        },
+        {
+          "id": "quality-ra-2",
+          "text": "Data Integrity",
+          "type": "istar.Quality",
+          "x": 720,
+          "y": 1000
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "dep-fp-d-1",
+      "text": "Deliver Food to Retailer",
+      "type": "istar.Goal",
+      "source": "task-fp-4",
+      "target": "goal-d-1"
+    },
+    {
+      "id": "dep-ra-fp-1",
+      "text": "Adhere to Quality Standards",
+      "type": "istar.Goal",
+      "source": "task-ra-1",
+      "target": "goal-fp-1"
+    },
+    {
+      "id": "dep-ra-fp-2",
+      "text": "Ensure Data Integrity",
+      "type": "istar.Goal",
+      "source": "task-ra-2",
+      "target": "goal-fp-2"
+    },
+    {
+      "id": "dep-d-fp-1",
+      "text": "Provide Processed Food for Shipment",
+      "type": "istar.Goal",
+      "source": "task-d-1",
+      "target": "goal-fp-3"
+    }
+  ],
+  "links": [
+    {
+      "id": "ref-fp-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-fp-1",
+      "target": "goal-fp-1"
+    },
+    {
+      "id": "ref-fp-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-fp-2",
+      "target": "goal-fp-1"
+    },
+    {
+      "id": "ref-fp-3",
+      "type": "istar.AndRefinementLink",
+      "source": "task-fp-3",
+      "target": "goal-fp-2"
+    },
+    {
+      "id": "ref-fp-4",
+      "type": "istar.AndRefinementLink",
+      "source": "task-fp-4",
+      "target": "goal-fp-3"
+    },
+    {
+      "id": "ref-d-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-d-1",
+      "target": "goal-d-1"
+    },
+    {
+      "id": "ref-d-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-d-2",
+      "target": "goal-d-1"
+    },
+    {
+      "id": "ref-d-3",
+      "type": "istar.AndRefinementLink",
+      "source": "task-d-3",
+      "target": "goal-d-2"
+    },
+    {
+      "id": "ref-ra-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-ra-1",
+      "target": "goal-ra-1"
+    },
+    {
+      "id": "ref-ra-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-ra-2",
+      "target": "goal-ra-2"
+    },
+    {
+      "id": "contrib-fp-1",
+      "type": "istar.ContributionLink",
+      "source": "goal-fp-1",
+      "target": "quality-fp-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-fp-2",
+      "type": "istar.ContributionLink",
+      "source": "task-fp-3",
+      "target": "quality-fp-2",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-fp-3",
+      "type": "istar.ContributionLink",
+      "source": "goal-fp-3",
+      "target": "quality-fp-3",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-d-1",
+      "type": "istar.ContributionLink",
+      "source": "goal-d-1",
+      "target": "quality-d-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-d-2",
+      "type": "istar.ContributionLink",
+      "source": "goal-d-2",
+      "target": "quality-d-2",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-ra-1",
+      "type": "istar.ContributionLink",
+      "source": "goal-ra-1",
+      "target": "quality-ra-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-ra-2",
+      "type": "istar.ContributionLink",
+      "source": "goal-ra-2",
+      "target": "quality-ra-2",
+      "label": "Make"
+    },
+    {
+      "id": "qual-fp-1",
+      "type": "istar.QualificationLink",
+      "source": "quality-fp-1",
+      "target": "goal-fp-2"
+    },
+    {
+      "id": "new-ref-fp-root-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-fp-1",
+      "target": "new-goal-fp-root"
+    },
+    {
+      "id": "new-ref-fp-root-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-fp-2",
+      "target": "new-goal-fp-root"
+    },
+    {
+      "id": "new-ref-fp-root-3",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-fp-3",
+      "target": "new-goal-fp-root"
+    },
+    {
+      "id": "new-ref-d-root-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-d-1",
+      "target": "new-goal-d-root"
+    },
+    {
+      "id": "new-ref-d-root-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-d-2",
+      "target": "new-goal-d-root"
+    },
+    {
+      "id": "new-ref-ra-root-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-ra-1",
+      "target": "new-goal-ra-root"
+    },
+    {
+      "id": "new-ref-ra-root-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-ra-2",
+      "target": "new-goal-ra-root"
+    }
+  ],
+  "diagram": {
+    "width": 1200,
+    "height": 1200,
+    "name": "Blockchain Food Supply Chain - Refined Dependencies"
+  }
+}
+

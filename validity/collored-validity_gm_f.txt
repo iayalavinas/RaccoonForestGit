@@ -1,0 +1,621 @@
+{
+  "actors": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      "text": "System Administrator",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 100,
+      "customProperties": {
+        "Description": "Primarily concerned with security and management goals.",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "goal-admin-parent",
+          "text": "Fulfill Admin Duties",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 80,
+          "customProperties": {
+            "Description": "Top-level goal for the System Administrator.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal-admin-1",
+          "text": "Ensure System Security",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 160,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-admin-sec-1",
+          "text": "Configure User Access",
+          "type": "istar.Task",
+          "x": 100,
+          "y": 240,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-admin-sec-2",
+          "text": "Monitor for Threats",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 240,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "qual-admin-sec",
+          "text": "High Security",
+          "type": "istar.Quality",
+          "x": 150,
+          "y": 320,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal-admin-2",
+          "text": "Manage System",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 400,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-admin-man-1",
+          "text": "Backup Data",
+          "type": "istar.Task",
+          "x": 100,
+          "y": 480,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-admin-man-2",
+          "text": "Update System",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 480,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        }
+      ]
+    },
+    {
+      "id": "b2c3d4e5-f6g7-8901-2345-67890abcdef1",
+      "text": "Content Manager",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 100,
+      "customProperties": {
+        "Description": "Focused on ease of use and the richness of built-in tools.",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "goal-cm-1",
+          "text": "Manage Content Easily",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 160,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-cm-1",
+          "text": "Create/Edit Content",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 240,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "qual-cm-ease",
+          "text": "High Ease of Use",
+          "type": "istar.Quality",
+          "x": 450,
+          "y": 320,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3d4e5f6-g7h8-9012-3456-7890abcdef23",
+      "text": "Final User",
+      "type": "istar.Actor",
+      "x": 700,
+      "y": 100,
+      "customProperties": {
+        "Description": "Most concerned with efficiency.",
+		    "satLevel": 0
+      },
+      "nodes": [
+        {
+          "id": "goal-user-1",
+          "text": "Use System Efficiently",
+          "type": "istar.Goal",
+          "x": 750,
+          "y": 160,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task-user-1",
+          "text": "Search for Content",
+          "type": "istar.Task",
+          "x": 750,
+          "y": 240,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "qual-user-eff",
+          "text": "High Efficiency",
+          "type": "istar.Quality",
+          "x": 750,
+          "y": 320,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "d4e5f6g7-h8i9-0123-4567-890abcdef345",
+      "text": "CMS",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 600,
+      "customProperties": {
+        "Description": "The final system that all the actors will use.",
+		    "satLevel": 25
+      },
+      "nodes": [
+        {
+          "id": "goal-cms-parent",
+          "text": "Fulfill System Requirements",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 680,
+          "customProperties": {
+            "Description": "Top-level goal for the CMS.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal-cms-1",
+          "text": "Provide Security Features",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 760,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-cms-sec-1",
+          "text": "Implement Access Control",
+          "type": "istar.Task",
+          "x": 150,
+          "y": 840,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "qual-cms-sec",
+          "text": "Secure",
+          "type": "istar.Quality",
+          "x": 150,
+          "y": 920,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal-cms-3",
+          "text": "Be Easy to Use",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 760,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-cms-ease-1",
+          "text": "Provide WYSIWYG Editor",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 840,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "qual-cms-ease",
+          "text": "Usable",
+          "type": "istar.Quality",
+          "x": 450,
+          "y": 920,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal-cms-5",
+          "text": "Be Efficient",
+          "type": "istar.Goal",
+          "x": 750,
+          "y": 760,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-cms-eff-1",
+          "text": "Implement Fast Search",
+          "type": "istar.Task",
+          "x": 750,
+          "y": 840,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "qual-cms-eff",
+          "text": "Efficient",
+          "type": "istar.Quality",
+          "x": 750,
+          "y": 920,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "dep-sec-1",
+      "type": "istar.Goal",
+      "text": "Security Provided",
+      "source": "task-admin-sec-1",
+      "target": "goal-cms-1"
+    },
+    {
+      "id": "dep-ease-1",
+      "type": "istar.Quality",
+      "text": "Ease of Use Provided",
+      "source": "task-cm-1",
+      "target": "goal-cms-3"
+    },
+    {
+      "id": "dep-eff-1",
+      "type": "istar.Quality",
+      "text": "Efficiency Provided",
+      "source": "task-user-1",
+      "target": "goal-cms-5"
+    }
+  ],
+  "links": [
+    {
+      "id": "link-admin-parent-refine-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-admin-1",
+      "target": "goal-admin-parent"
+    },
+    {
+      "id": "link-admin-parent-refine-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-admin-2",
+      "target": "goal-admin-parent"
+    },
+    {
+      "id": "link-admin-sec-refine-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-admin-sec-1",
+      "target": "goal-admin-1"
+    },
+    {
+      "id": "link-admin-sec-refine-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-admin-sec-2",
+      "target": "goal-admin-1"
+    },
+    {
+      "id": "link-admin-man-refine-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-admin-man-1",
+      "target": "goal-admin-2"
+    },
+    {
+      "id": "link-admin-man-refine-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-admin-man-2",
+      "target": "goal-admin-2"
+    },
+    {
+      "id": "link-admin-sec-contrib-1",
+      "type": "istar.ContributionLink",
+      "source": "task-admin-sec-1",
+      "target": "qual-admin-sec",
+      "label": "Make"
+    },
+    {
+      "id": "link-admin-sec-contrib-2",
+      "type": "istar.ContributionLink",
+      "source": "task-admin-sec-2",
+      "target": "qual-admin-sec",
+      "label": "Make"
+    },
+    {
+      "id": "link-cm-ease-refine",
+      "type": "istar.AndRefinementLink",
+      "source": "task-cm-1",
+      "target": "goal-cm-1"
+    },
+    {
+      "id": "link-cm-ease-contrib",
+      "type": "istar.ContributionLink",
+      "source": "task-cm-1",
+      "target": "qual-cm-ease",
+      "label": "Make"
+    },
+    {
+      "id": "link-user-eff-refine",
+      "type": "istar.OrRefinementLink",
+      "source": "task-user-1",
+      "target": "goal-user-1"
+    },
+    {
+      "id": "link-user-eff-contrib",
+      "type": "istar.ContributionLink",
+      "source": "task-user-1",
+      "target": "qual-user-eff",
+      "label": "Make"
+    },
+    {
+      "id": "link-cms-parent-refine-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-cms-1",
+      "target": "goal-cms-parent"
+    },
+    {
+      "id": "link-cms-parent-refine-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-cms-3",
+      "target": "goal-cms-parent"
+    },
+    {
+      "id": "link-cms-parent-refine-3",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-cms-5",
+      "target": "goal-cms-parent"
+    },
+    {
+      "id": "link-cms-sec-refine",
+      "type": "istar.AndRefinementLink",
+      "source": "task-cms-sec-1",
+      "target": "goal-cms-1"
+    },
+    {
+      "id": "link-cms-sec-contrib",
+      "type": "istar.ContributionLink",
+      "source": "task-cms-sec-1",
+      "target": "qual-cms-sec",
+      "label": "Make"
+    },
+    {
+      "id": "link-cms-ease-refine",
+      "type": "istar.AndRefinementLink",
+      "source": "task-cms-ease-1",
+      "target": "goal-cms-3"
+    },
+    {
+      "id": "link-cms-ease-contrib",
+      "type": "istar.ContributionLink",
+      "source": "task-cms-ease-1",
+      "target": "qual-cms-ease",
+      "label": "Make"
+    },
+    {
+      "id": "link-cms-eff-refine",
+      "type": "istar.AndRefinementLink",
+      "source": "task-cms-eff-1",
+      "target": "goal-cms-5"
+    },
+    {
+      "id": "link-cms-eff-contrib",
+      "type": "istar.ContributionLink",
+      "source": "task-cms-eff-1",
+      "target": "qual-cms-eff",
+      "label": "Make"
+    },
+    {
+      "id": "dep-link-sec-src",
+      "type": "istar.DependencyLink",
+      "source": "task-admin-sec-1",
+      "target": "dep-sec-1"
+    },
+    {
+      "id": "dep-link-sec-tgt",
+      "type": "istar.DependencyLink",
+      "source": "dep-sec-1",
+      "target": "goal-cms-1"
+    },
+    {
+      "id": "dep-link-ease-src",
+      "type": "istar.DependencyLink",
+      "source": "task-cm-1",
+      "target": "dep-ease-1"
+    },
+    {
+      "id": "dep-link-ease-tgt",
+      "type": "istar.DependencyLink",
+      "source": "dep-ease-1",
+      "target": "goal-cms-3"
+    },
+    {
+      "id": "dep-link-eff-src",
+      "type": "istar.DependencyLink",
+      "source": "task-user-1",
+      "target": "dep-eff-1"
+    },
+    {
+      "id": "dep-link-eff-tgt",
+      "type": "istar.DependencyLink",
+      "source": "dep-eff-1",
+      "target": "goal-cms-5"
+    }
+  ],
+"display": {
+"task-admin-sec-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"dep-ease-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-cms-eff-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"qual-cms-ease": {
+	 "backgroundColor": "#FA1805"
+},
+"task-user-1": {
+	 "backgroundColor": "#FA1805"
+},
+"goal-admin-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-user-1": {
+	 "backgroundColor": "#FA1805"
+},
+"goal-admin-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"d4e5f6g7-h8i9-0123-4567-890abcdef345": {
+	 "backgroundColor": "#BC5722"
+},
+"qual-cms-eff": {
+	 "backgroundColor": "#FA1805"
+},
+"task-cms-ease-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"a1b2c3d4-e5f6-7890-1234-567890abcdef": {
+	 "backgroundColor": "#FFFFFF"
+},
+"goal-cm-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-cm-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-admin-parent": {
+	 "backgroundColor": "#77FF12 "
+},
+"qual-cm-ease": {
+	 "backgroundColor": "#FA1805"
+},
+"b2c3d4e5-f6g7-8901-2345-67890abcdef1": {
+	 "backgroundColor": "#FFFFFF"
+},
+"qual-user-eff": {
+	 "backgroundColor": "#FA1805"
+},
+"task-admin-sec-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"dep-eff-1": {
+	 "backgroundColor": "#FA1805"
+},
+"qual-admin-sec": {
+	 "backgroundColor": "#FA1805"
+},
+"qual-cms-sec": {
+	 "backgroundColor": "#FA1805"
+},
+"goal-cms-3": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-cms-sec-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-cms-5": {
+	 "backgroundColor": "#77FF12 "
+},
+"c3d4e5f6-g7h8-9012-3456-7890abcdef23": {
+	 "backgroundColor": "#FA1805"
+},
+"dep-sec-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-admin-man-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-cms-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-admin-man-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-cms-parent": {
+	 "backgroundColor": "#77FF12 "
+}
+},
+  "istar": "2.0",
+  "saveDate": "2025-05-16T10:30:00Z",
+  "diagram": {
+    "width": 1200,
+    "height": 1100,
+    "name": "University Content Management System - Refined Dependencies",
+    "customProperties": {
+      "Description": "Dependencies have been refined to link specific nodes between actors."
+    }
+  }
+}
+

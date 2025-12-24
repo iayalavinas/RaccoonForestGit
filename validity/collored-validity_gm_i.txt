@@ -1,0 +1,390 @@
+{
+  "actors": [
+    {
+      "id": "a-initiator-01",
+      "text": "Meeting Initiator",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "g-initiator-root",
+          "text": "Overall Scheduling Success",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 50
+        },
+        {
+          "id": "g-initiator-01",
+          "text": "Ensure Required Attendance",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 150
+        },
+        {
+          "id": "t-initiator-01",
+          "text": "Delegate Scheduling to System",
+          "type": "istar.Task",
+          "x": 100,
+          "y": 250
+        },
+        {
+          "id": "t-initiator-02",
+          "text": "Define Meeting Requirements",
+          "type": "istar.Task",
+          "x": 250,
+          "y": 250
+        },
+        {
+          "id": "q-initiator-01",
+          "text": "Low Scheduling Effort",
+          "type": "istar.Quality",
+          "x": 250,
+          "y": 200
+        }
+      ]
+    },
+    {
+      "id": "a-participant-01",
+      "text": "Meeting Participant",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "g-participant-root",
+          "text": "Successful Meeting Participation",
+          "type": "istar.Goal",
+          "x": 500,
+          "y": 50
+        },
+        {
+          "id": "g-participant-01",
+          "text": "Attend Meeting",
+          "type": "istar.Goal",
+          "x": 500,
+          "y": 150
+        },
+        {
+          "id": "t-participant-01",
+          "text": "Provide Availability Data",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 250
+        },
+        {
+          "id": "t-participant-02",
+          "text": "Block Time in Calendar",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 250
+        },
+        {
+          "id": "q-participant-01",
+          "text": "Convenient Scheduling Process",
+          "type": "istar.Quality",
+          "x": 650,
+          "y": 150
+        },
+        {
+          "id": "q-participant-02",
+          "text": "Minimal Effort",
+          "type": "istar.Quality",
+          "x": 650,
+          "y": 230
+        }
+      ]
+    },
+    {
+      "id": "a-scheduler-01",
+      "text": "Meeting Scheduler",
+      "type": "istar.Agent",
+      "x": 750,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "g-scheduler-root",
+          "text": "System Operational Success",
+          "type": "istar.Goal",
+          "x": 850,
+          "y": 50
+        },
+        {
+          "id": "g-scheduler-01",
+          "text": "Automate Scheduling",
+          "type": "istar.Goal",
+          "x": 850,
+          "y": 150
+        },
+        {
+          "id": "t-scheduler-01",
+          "text": "Find Optimal Time Slot",
+          "type": "istar.Task",
+          "x": 800,
+          "y": 250
+        },
+        {
+          "id": "t-scheduler-02",
+          "text": "Confirm and Notify Meeting",
+          "type": "istar.Task",
+          "x": 950,
+          "y": 250
+        },
+        {
+          "id": "q-scheduler-01",
+          "text": "Scheduling Efficiency",
+          "type": "istar.Quality",
+          "x": 800,
+          "y": 350
+        },
+        {
+          "id": "q-scheduler-02",
+          "text": "Accuracy of Scheduling",
+          "type": "istar.Quality",
+          "x": 950,
+          "y": 350
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "d-01",
+      "text": "Meeting Attendance",
+      "type": "istar.Goal",
+      "x": 250,
+      "y": 400,
+      "source": "t-initiator-02",
+      "target": "g-participant-01"
+    },
+    {
+      "id": "d-02",
+      "text": "Scheduled Meeting",
+      "type": "istar.Resource",
+      "x": 400,
+      "y": 500,
+      "source": "t-initiator-01",
+      "target": "t-scheduler-02"
+    },
+    {
+      "id": "d-03",
+      "text": "Convenient Scheduling Process",
+      "type": "istar.Quality",
+      "x": 550,
+      "y": 400,
+      "source": "q-participant-02",
+      "target": "g-scheduler-root"
+    },
+    {
+      "id": "d-04",
+      "text": "Participant Availability Data",
+      "type": "istar.Resource",
+      "x": 700,
+      "y": 500,
+      "source": "t-scheduler-01",
+      "target": "t-participant-01"
+    }
+  ],
+  "links": [
+    {
+      "id": "l-initiator-root-01",
+      "type": "istar.AndRefinementLink",
+      "source": "g-initiator-01",
+      "target": "g-initiator-root"
+    },
+    {
+      "id": "l-participant-root-01",
+      "type": "istar.AndRefinementLink",
+      "source": "g-participant-01",
+      "target": "g-participant-root"
+    },
+    {
+      "id": "l-scheduler-root-01",
+      "type": "istar.AndRefinementLink",
+      "source": "g-scheduler-01",
+      "target": "g-scheduler-root"
+    },
+    {
+      "id": "l-initiator-sr-01",
+      "type": "istar.AndRefinementLink",
+      "source": "t-initiator-01",
+      "target": "g-initiator-01"
+    },
+    {
+      "id": "l-initiator-sr-02",
+      "type": "istar.AndRefinementLink",
+      "source": "t-initiator-02",
+      "target": "g-initiator-01"
+    },
+    {
+      "id": "l-initiator-q-01",
+      "type": "istar.ContributionLink",
+      "source": "t-initiator-01",
+      "target": "q-initiator-01",
+      "label": "make"
+    },
+    {
+      "id": "l-participant-sr-01",
+      "type": "istar.AndRefinementLink",
+      "source": "t-participant-01",
+      "target": "g-participant-01"
+    },
+    {
+      "id": "l-participant-sr-02",
+      "type": "istar.AndRefinementLink",
+      "source": "t-participant-02",
+      "target": "g-participant-01"
+    },
+    {
+      "id": "l-participant-q-01",
+      "type": "istar.ContributionLink",
+      "source": "t-participant-01",
+      "target": "q-participant-02",
+      "label": "help"
+    },
+    {
+      "id": "l-participant-q-02",
+      "type": "istar.ContributionLink",
+      "source": "t-participant-02",
+      "target": "q-participant-02",
+      "label": "hurt"
+    },
+    {
+      "id": "l-participant-q-03",
+      "type": "istar.ContributionLink",
+      "source": "g-participant-01",
+      "target": "q-participant-01",
+      "label": "make"
+    },
+    {
+      "id": "l-participant-q-04",
+      "type": "istar.ContributionLink",
+      "source": "q-participant-01",
+      "target": "q-participant-02",
+      "label": "make"
+    },
+    {
+      "id": "l-scheduler-sr-01",
+      "type": "istar.AndRefinementLink",
+      "source": "t-scheduler-01",
+      "target": "g-scheduler-01"
+    },
+    {
+      "id": "l-scheduler-sr-02",
+      "type": "istar.AndRefinementLink",
+      "source": "t-scheduler-02",
+      "target": "g-scheduler-01"
+    },
+    {
+      "id": "l-scheduler-q-01",
+      "type": "istar.ContributionLink",
+      "source": "t-scheduler-01",
+      "target": "q-scheduler-01",
+      "label": "make"
+    },
+    {
+      "id": "l-scheduler-q-02",
+      "type": "istar.ContributionLink",
+      "source": "t-scheduler-02",
+      "target": "q-scheduler-02",
+      "label": "make"
+    },
+    {
+      "id": "l-scheduler-q-03",
+      "type": "istar.ContributionLink",
+      "source": "g-scheduler-01",
+      "target": "q-scheduler-01",
+      "label": "make"
+    },
+    {
+      "id": "l-scheduler-q-04",
+      "type": "istar.ContributionLink",
+      "source": "g-scheduler-01",
+      "target": "q-scheduler-02",
+      "label": "make"
+    }
+  ],
+"display": {
+"g-participant-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-scheduler-root": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-03": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-participant-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-initiator-root": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-04": {
+	 "backgroundColor": "#77FF12 "
+},
+"a-initiator-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"d-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-participant-root": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-initiator-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-participant-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"g-scheduler-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-scheduler-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-scheduler-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"a-participant-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-scheduler-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-scheduler-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"q-initiator-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-participant-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-initiator-02": {
+	 "backgroundColor": "#77FF12 "
+},
+"a-scheduler-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-participant-01": {
+	 "backgroundColor": "#77FF12 "
+},
+"t-initiator-01": {
+	 "backgroundColor": "#77FF12 "
+}
+},
+  "istar": "2.0",
+  "saveDate": "2025-01-01T00:00:00Z",
+  "diagram": {
+    "width": 1200,
+    "height": 600,
+    "name": "Meeting Scheduling System SR/SD Model with Refined Dependencies"
+  }
+}
+

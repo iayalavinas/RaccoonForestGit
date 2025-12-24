@@ -1,0 +1,8 @@
+ac-parent-goal=100*_r3
+ac-goal-2=100*_r8
+ac-goal-1=100*_r18
+ac-resource-2=100*_r26
+ac-resource-1=100*_r35
+ac-task-2=100*_r3
+ac-task-1=100*_r32
+ac-task-3=100*_r39

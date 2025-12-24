@@ -1,0 +1,537 @@
+{
+  "istar": "2.0",
+  "actors": [
+    {
+      "id": "head-of-unit-actor",
+      "text": "Head of Unit",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 100,
+      "customProperties": {
+        "Description": "A manager whose primary soft-goal is to exploit ICT to increase performance while avoiding risks.",
+		    "satLevel": 0
+      },
+      "nodes": [
+        {
+          "id": "goal-head-1",
+          "text": "Exploit ICT to Increase Performance While Avoiding Risks",
+          "type": "istar.Goal",
+          "x": 120,
+          "y": 180,
+          "customProperties": {
+            "Description": "The main driver for the Head of Unit.",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task-head-1",
+          "text": "Increase Unit Productivity",
+          "type": "istar.Task",
+          "x": 50,
+          "y": 280
+        },
+        {
+          "id": "task-head-2",
+          "text": "Increase Personal Performance",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 280
+        },
+        {
+          "id": "task-head-3",
+          "text": "Avoid Technology Risks",
+          "type": "istar.Task",
+          "x": 350,
+          "y": 280
+        },
+        {
+          "id": "res-head-1",
+          "text": "ERMS",
+          "type": "istar.Resource",
+          "x": 200,
+          "y": 380
+        },
+        {
+          "id": "quality-head-1",
+          "text": "High Performance",
+          "type": "istar.Quality",
+          "x": 125,
+          "y": 460
+        },
+        {
+          "id": "quality-head-2",
+          "text": "Risk Avoidance",
+          "type": "istar.Quality",
+          "x": 275,
+          "y": 460
+        }
+      ]
+    },
+    {
+      "id": "secretary-actor",
+      "text": "Secretary",
+      "type": "istar.Actor",
+      "x": 500,
+      "y": 100,
+      "customProperties": {
+        "Description": "Acts as a gatekeeper and initial organizer for documents, ensuring the Head of Unit receives them in an order that reflects their importance.",
+		    "satLevel": 100
+      },
+      "nodes": [
+        {
+          "id": "goal-sec-1",
+          "text": "Manage Incoming Documents",
+          "type": "istar.Goal",
+          "x": 520,
+          "y": 180
+        },
+        {
+          "id": "task-sec-1",
+          "text": "Act as Gatekeeper",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 280,
+          "customProperties": {
+            "Description": "Manage the flow of incoming documents.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-sec-2",
+          "text": "Organize Documents by Importance",
+          "type": "istar.Task",
+          "x": 600,
+          "y": 280,
+          "customProperties": {
+            "Description": "Sort and order documents based on importance.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "res-sec-1",
+          "text": "Incoming Documents",
+          "type": "istar.Resource",
+          "x": 525,
+          "y": 380
+        },
+        {
+          "id": "quality-sec-1",
+          "text": "Prioritized",
+          "type": "istar.Quality",
+          "x": 600,
+          "y": 460
+        }
+      ]
+    },
+    {
+      "id": "employee-actor",
+      "text": "Employee",
+      "type": "istar.Actor",
+      "x": 100,
+      "y": 550,
+      "customProperties": {
+        "Description": "An employee whose goals are to be more productive and to protect his/her privacy.",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "goal-emp-parent",
+          "text": "Achieve Personal and Professional Objectives",
+          "type": "istar.Goal",
+          "x": 120,
+          "y": 560
+        },
+        {
+          "id": "goal-emp-1",
+          "text": "Be More Productive",
+          "type": "istar.Goal",
+          "x": 50,
+          "y": 660,
+          "customProperties": {
+            "Description": "A primary goal for the employee, also desired by the Head of Unit.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "goal-emp-2",
+          "text": "Protect My Privacy",
+          "type": "istar.Goal",
+          "x": 200,
+          "y": 850,
+          "customProperties": {
+            "Description": "A personal goal of the employee.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-emp-1",
+          "text": "Have Easy Document Access",
+          "type": "istar.Task",
+          "x": -20,
+          "y": 750
+        },
+        {
+          "id": "task-emp-2",
+          "text": "Have Increased Process Visibility",
+          "type": "istar.Task",
+          "x": 130,
+          "y": 750
+        },
+        {
+          "id": "task-emp-3",
+          "text": "Ensure Personal Data is Not Misused",
+          "type": "istar.Task",
+          "x": 200,
+          "y": 930
+        },
+        {
+          "id": "res-emp-1",
+          "text": "ERMS",
+          "type": "istar.Resource",
+          "x": 125,
+          "y": 1010
+        },
+        {
+          "id": "quality-emp-1",
+          "text": "Productivity",
+          "type": "istar.Quality",
+          "x": 50,
+          "y": 660
+        },
+        {
+          "id": "quality-emp-2",
+          "text": "Privacy",
+          "type": "istar.Quality",
+          "x": 200,
+          "y": 850
+        }
+      ]
+    },
+    {
+      "id": "archivist-actor",
+      "text": "Archivist",
+      "type": "istar.Actor",
+      "x": 500,
+      "y": 550,
+      "customProperties": {
+        "Description": "Manages the lifecycle of physical documents by securely storing, distributing, and retrieving them upon request.",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "goal-arc-1",
+          "text": "Manage Document Lifecycle",
+          "type": "istar.Goal",
+          "x": 520,
+          "y": 630
+        },
+        {
+          "id": "task-arc-2",
+          "text": "Store Documents Securely",
+          "type": "istar.Task",
+          "x": 420,
+          "y": 730,
+          "customProperties": {
+            "Description": "Ensures the safe conservation of documents.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-arc-3",
+          "text": "Distribute Documents as Directed",
+          "type": "istar.Task",
+          "x": 570,
+          "y": 730,
+          "customProperties": {
+            "Description": "Transmits documents to employees.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-arc-4",
+          "text": "Retrieve Documents on Request",
+          "type": "istar.Task",
+          "x": 720,
+          "y": 730,
+          "customProperties": {
+            "Description": "Provides documents to employees when needed.",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "res-arc-1",
+          "text": "Document Archive",
+          "type": "istar.Resource",
+          "x": 570,
+          "y": 830
+        },
+        {
+          "id": "quality-arc-1",
+          "text": "Security",
+          "type": "istar.Quality",
+          "x": 420,
+          "y": 910
+        },
+        {
+          "id": "quality-arc-2",
+          "text": "Availability",
+          "type": "istar.Quality",
+          "x": 720,
+          "y": 910
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "dep-head-sec-1",
+      "text": "Documents Prioritized",
+      "type": "istar.Quality",
+      "source": "task-head-2",
+      "target": "quality-sec-1"
+    },
+    {
+      "id": "dep-head-arc-1",
+      "text": "Documents Stored Safely",
+      "type": "istar.Quality",
+      "source": "task-head-3",
+      "target": "quality-arc-1"
+    },
+    {
+      "id": "dep-head-arc-2",
+      "text": "Distribute Documents",
+      "type": "istar.Task",
+      "source": "task-head-1",
+      "target": "task-arc-3"
+    },
+    {
+      "id": "dep-emp-arc-1",
+      "text": "Documents Retrieved on Request",
+      "type": "istar.Goal",
+      "source": "task-emp-1",
+      "target": "goal-arc-1"
+    },
+    {
+      "id": "dep-head-emp-1",
+      "text": "Be More Productive",
+      "type": "istar.Goal",
+      "source": "task-head-1",
+      "target": "goal-emp-1"
+    }
+  ],
+  "links": [
+    {
+      "id": "ref-head-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-head-1",
+      "target": "goal-head-1"
+    },
+    {
+      "id": "ref-head-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-head-2",
+      "target": "goal-head-1"
+    },
+    {
+      "id": "ref-head-3",
+      "type": "istar.AndRefinementLink",
+      "source": "task-head-3",
+      "target": "goal-head-1"
+    },
+    {
+      "id": "ref-sec-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-sec-1",
+      "target": "goal-sec-1"
+    },
+    {
+      "id": "ref-sec-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-sec-2",
+      "target": "goal-sec-1"
+    },
+    {
+      "id": "ref-emp-1",
+      "type": "istar.OrRefinementLink",
+      "source": "task-emp-1",
+      "target": "goal-emp-1"
+    },
+    {
+      "id": "ref-emp-2",
+      "type": "istar.OrRefinementLink",
+      "source": "task-emp-2",
+      "target": "goal-emp-1"
+    },
+    {
+      "id": "ref-emp-3",
+      "type": "istar.AndRefinementLink",
+      "source": "task-emp-3",
+      "target": "goal-emp-2"
+    },
+    {
+      "id": "ref-arc-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-arc-2",
+      "target": "goal-arc-1"
+    },
+    {
+      "id": "ref-arc-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-arc-3",
+      "target": "goal-arc-1"
+    },
+    {
+      "id": "ref-arc-3",
+      "type": "istar.AndRefinementLink",
+      "source": "task-arc-4",
+      "target": "goal-arc-1"
+    },
+    {
+      "id": "needed-head-1",
+      "type": "istar.NeededByLink",
+      "source": "res-head-1",
+      "target": "task-head-1"
+    },
+    {
+      "id": "needed-head-2",
+      "type": "istar.NeededByLink",
+      "source": "res-head-1",
+      "target": "task-head-2"
+    },
+    {
+      "id": "needed-head-3",
+      "type": "istar.NeededByLink",
+      "source": "res-head-1",
+      "target": "task-head-3"
+    },
+    {
+      "id": "needed-sec-1",
+      "type": "istar.NeededByLink",
+      "source": "res-sec-1",
+      "target": "task-sec-1"
+    },
+    {
+      "id": "needed-sec-2",
+      "type": "istar.NeededByLink",
+      "source": "res-sec-1",
+      "target": "task-sec-2"
+    },
+    {
+      "id": "needed-emp-1",
+      "type": "istar.NeededByLink",
+      "source": "res-emp-1",
+      "target": "task-emp-1"
+    },
+    {
+      "id": "needed-emp-2",
+      "type": "istar.NeededByLink",
+      "source": "res-emp-1",
+      "target": "task-emp-2"
+    },
+    {
+      "id": "needed-emp-3",
+      "type": "istar.NeededByLink",
+      "source": "res-emp-1",
+      "target": "task-emp-3"
+    },
+    {
+      "id": "needed-arc-1",
+      "type": "istar.NeededByLink",
+      "source": "res-arc-1",
+      "target": "task-arc-2"
+    },
+    {
+      "id": "needed-arc-2",
+      "type": "istar.NeededByLink",
+      "source": "res-arc-1",
+      "target": "task-arc-3"
+    },
+    {
+      "id": "needed-arc-3",
+      "type": "istar.NeededByLink",
+      "source": "res-arc-1",
+      "target": "task-arc-4"
+    },
+    {
+      "id": "contrib-head-qual-1",
+      "type": "istar.ContributionLink",
+      "source": "res-head-1",
+      "target": "quality-head-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-head-qual-2",
+      "type": "istar.ContributionLink",
+      "source": "res-head-1",
+      "target": "quality-head-2",
+      "label": "Help"
+    },
+    {
+      "id": "contrib-head-goal-1",
+      "type": "istar.ContributionLink",
+      "source": "goal-head-1",
+      "target": "quality-head-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-head-goal-2",
+      "type": "istar.ContributionLink",
+      "source": "goal-head-1",
+      "target": "quality-head-2",
+      "label": "Make"
+    },
+    {
+      "id": "qual-sec-1",
+      "type": "istar.QualificationLink",
+      "source": "quality-sec-1",
+      "target": "task-sec-2"
+    },
+    {
+      "id": "contrib-emp-1",
+      "type": "istar.ContributionLink",
+      "source": "goal-emp-1",
+      "target": "quality-emp-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-emp-2",
+      "type": "istar.ContributionLink",
+      "source": "goal-emp-2",
+      "target": "quality-emp-2",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-arc-1",
+      "type": "istar.ContributionLink",
+      "source": "task-arc-2",
+      "target": "quality-arc-1",
+      "label": "Make"
+    },
+    {
+      "id": "contrib-arc-2",
+      "type": "istar.ContributionLink",
+      "source": "task-arc-4",
+      "target": "quality-arc-2",
+      "label": "Help"
+    },
+    {
+      "id": "ref-emp-parent-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-emp-1",
+      "target": "goal-emp-parent"
+    },
+    {
+      "id": "ref-emp-parent-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-emp-2",
+      "target": "goal-emp-parent"
+    }
+  ],
+  "diagram": {
+    "width": 1200,
+    "height": 1200,
+    "name": "ERMS Full Model - Corrected"
+  }
+}
+

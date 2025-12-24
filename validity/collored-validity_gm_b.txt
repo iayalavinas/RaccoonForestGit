@@ -1,0 +1,607 @@
+{
+  "actors": [
+    {
+      "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      "text": "Telemedicine Startup XYZ",
+      "type": "istar.Actor",
+      "x": 50,
+      "y": 150,
+      "customProperties": {
+        "Description": "The goal of Telemedicine Startup XYZ is To deliver good products and services to customers on time, even when starting with limited requirements using the telemedicine system named XYZ.",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "goal-startup-parent",
+          "text": "Manage Telemedicine Services",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 175,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal-startup-1",
+          "text": "Deliver good products and services",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 250,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task-startup-1",
+          "text": "Develop high-quality software",
+          "type": "istar.Task",
+          "x": 75,
+          "y": 350,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "resource-startup-1",
+          "text": "Development Team",
+          "type": "istar.Resource",
+          "x": 75,
+          "y": 450,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-startup-2",
+          "text": "Provide excellent customer support",
+          "type": "istar.Task",
+          "x": 225,
+          "y": 350,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "resource-startup-2",
+          "text": "Support Infrastructure",
+          "type": "istar.Resource",
+          "x": 225,
+          "y": 450,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "quality-startup-1",
+          "text": "High Quality Product",
+          "type": "istar.Quality",
+          "x": 150,
+          "y": 520,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "goal-startup-2",
+          "text": "Ensure on-time delivery",
+          "type": "istar.Goal",
+          "x": 150,
+          "y": 600,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task-startup-3",
+          "text": "Use agile development",
+          "type": "istar.Task",
+          "x": 150,
+          "y": 700,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "resource-startup-3",
+          "text": "Project Management Tools",
+          "type": "istar.Resource",
+          "x": 150,
+          "y": 800,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "quality-startup-2",
+          "text": "Timeliness",
+          "type": "istar.Quality",
+          "x": 150,
+          "y": 870,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "b2c3d4e5-f6a7-8901-2345-67890abcdef1",
+      "text": "Customers",
+      "type": "istar.Actor",
+      "x": 700,
+      "y": 150,
+      "customProperties": {
+        "Description": "The goal of the customers is To receive good and timely telemedicine products and services from the startup throught the system.",
+		    "satLevel": 66
+      },
+      "nodes": [
+        {
+          "id": "goal-customer-1",
+          "text": "Receive good and timely service",
+          "type": "istar.Goal",
+          "x": 800,
+          "y": 250,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task-customer-1",
+          "text": "Access telemedicine platform",
+          "type": "istar.Task",
+          "x": 725,
+          "y": 350,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "resource-customer-1",
+          "text": "Device with Internet",
+          "type": "istar.Resource",
+          "x": 725,
+          "y": 450,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 98
+          }
+        },
+        {
+          "id": "quality-customer-1",
+          "text": "User-Friendliness",
+          "type": "istar.Quality",
+          "x": 725,
+          "y": 520,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-customer-2",
+          "text": "Schedule appointment",
+          "type": "istar.Task",
+          "x": 875,
+          "y": 350,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "c3d4e5f6-a7b8-9012-3456-7890abcdef12",
+      "text": "Telemedicine system",
+      "type": "istar.Actor",
+      "x": 450,
+      "y": 600,
+      "customProperties": {
+        "Description": "The telemedicine system named XYZ.",
+		    "satLevel": 60
+      },
+      "nodes": [
+        {
+          "id": "goal-system-1",
+          "text": "Provide platform for telemedicine services",
+          "type": "istar.Goal",
+          "x": 550,
+          "y": 700,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "task-system-1",
+          "text": "Host secure video consultations",
+          "type": "istar.Task",
+          "x": 475,
+          "y": 800,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "resource-system-1",
+          "text": "Video Conferencing Module",
+          "type": "istar.Resource",
+          "x": 475,
+          "y": 900,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "quality-system-1",
+          "text": "Security",
+          "type": "istar.Quality",
+          "x": 475,
+          "y": 970,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        },
+        {
+          "id": "task-system-2",
+          "text": "Manage patient records",
+          "type": "istar.Task",
+          "x": 625,
+          "y": 800,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "resource-system-2",
+          "text": "Patient Database",
+          "type": "istar.Resource",
+          "x": 625,
+          "y": 900,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 100
+          }
+        },
+        {
+          "id": "quality-system-2",
+          "text": "Confidentiality",
+          "type": "istar.Quality",
+          "x": 625,
+          "y": 970,
+          "customProperties": {
+            "Description": "",
+		    "satLevel": 0
+          }
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    {
+      "id": "dep1",
+      "text": "Good and timely telemedicine products and services",
+      "type": "istar.Goal",
+      "x": 425,
+      "y": 150,
+      "source": "goal-customer-1",
+      "target": "goal-startup-1",
+      "customProperties": {
+        "Description": "",
+		    "satLevel": 0
+      }
+    },
+    {
+      "id": "dep2",
+      "text": "Enable delivery of products and services",
+      "type": "istar.Goal",
+      "x": 250,
+      "y": 375,
+      "source": "task-startup-1",
+      "target": "goal-system-1",
+      "customProperties": {
+        "Description": "",
+		    "satLevel": 0
+      }
+    },
+    {
+      "id": "dep3",
+      "text": "Receive products and services",
+      "type": "istar.Goal",
+      "x": 600,
+      "y": 375,
+      "source": "task-customer-1",
+      "target": "goal-system-1",
+      "customProperties": {
+        "Description": "",
+		    "satLevel": 0
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "link-dep1-source",
+      "type": "istar.DependencyLink",
+      "source": "b2c3d4e5-f6a7-8901-2345-67890abcdef1",
+      "target": "dep1"
+    },
+    {
+      "id": "link-dep1-target",
+      "type": "istar.DependencyLink",
+      "source": "dep1",
+      "target": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+    },
+    {
+      "id": "link-dep2-source",
+      "type": "istar.DependencyLink",
+      "source": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      "target": "dep2"
+    },
+    {
+      "id": "link-dep2-target",
+      "type": "istar.DependencyLink",
+      "source": "dep2",
+      "target": "c3d4e5f6-a7b8-9012-3456-7890abcdef12"
+    },
+    {
+      "id": "link-dep3-source",
+      "type": "istar.DependencyLink",
+      "source": "b2c3d4e5-f6a7-8901-2345-67890abcdef1",
+      "target": "dep3"
+    },
+    {
+      "id": "link-dep3-target",
+      "type": "istar.DependencyLink",
+      "source": "dep3",
+      "target": "c3d4e5f6-a7b8-9012-3456-7890abcdef12"
+    },
+    {
+      "id": "ref-startup-parent-1",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-startup-1",
+      "target": "goal-startup-parent"
+    },
+    {
+      "id": "ref-startup-parent-2",
+      "type": "istar.AndRefinementLink",
+      "source": "goal-startup-2",
+      "target": "goal-startup-parent"
+    },
+    {
+      "id": "ref-startup-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-startup-1",
+      "target": "goal-startup-1"
+    },
+    {
+      "id": "ref-startup-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-startup-2",
+      "target": "goal-startup-1"
+    },
+    {
+      "id": "neededby-startup-1",
+      "type": "istar.NeededByLink",
+      "source": "resource-startup-1",
+      "target": "task-startup-1"
+    },
+    {
+      "id": "neededby-startup-2",
+      "type": "istar.NeededByLink",
+      "source": "resource-startup-2",
+      "target": "task-startup-2"
+    },
+    {
+      "id": "contribution-startup-1",
+      "type": "istar.ContributionLink",
+      "source": "task-startup-1",
+      "target": "quality-startup-1",
+      "label": "Make"
+    },
+    {
+      "id": "contribution-startup-2",
+      "type": "istar.ContributionLink",
+      "source": "task-startup-2",
+      "target": "quality-startup-1",
+      "label": "Help"
+    },
+    {
+      "id": "ref-startup-3",
+      "type": "istar.OrRefinementLink",
+      "source": "task-startup-3",
+      "target": "goal-startup-2"
+    },
+    {
+      "id": "neededby-startup-3",
+      "type": "istar.NeededByLink",
+      "source": "resource-startup-3",
+      "target": "task-startup-3"
+    },
+    {
+      "id": "contribution-startup-3",
+      "type": "istar.ContributionLink",
+      "source": "task-startup-3",
+      "target": "quality-startup-2",
+      "label": "Help"
+    },
+    {
+      "id": "ref-customer-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-customer-1",
+      "target": "goal-customer-1"
+    },
+    {
+      "id": "neededby-customer-1",
+      "type": "istar.NeededByLink",
+      "source": "resource-customer-1",
+      "target": "task-customer-1"
+    },
+    {
+      "id": "qualification-customer-1",
+      "type": "istar.QualificationLink",
+      "source": "quality-customer-1",
+      "target": "task-customer-1"
+    },
+    {
+      "id": "ref-customer-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-customer-2",
+      "target": "goal-customer-1"
+    },
+    {
+      "id": "ref-system-1",
+      "type": "istar.AndRefinementLink",
+      "source": "task-system-1",
+      "target": "goal-system-1"
+    },
+    {
+      "id": "neededby-system-1",
+      "type": "istar.NeededByLink",
+      "source": "resource-system-1",
+      "target": "task-system-1"
+    },
+    {
+      "id": "contribution-system-1",
+      "type": "istar.ContributionLink",
+      "source": "task-system-1",
+      "target": "quality-system-1",
+      "label": "Make"
+    },
+    {
+      "id": "ref-system-2",
+      "type": "istar.AndRefinementLink",
+      "source": "task-system-2",
+      "target": "goal-system-1"
+    },
+    {
+      "id": "neededby-system-2",
+      "type": "istar.NeededByLink",
+      "source": "resource-system-2",
+      "target": "task-system-2"
+    },
+    {
+      "id": "contribution-system-2",
+      "type": "istar.ContributionLink",
+      "source": "task-system-2",
+      "target": "quality-system-2",
+      "label": "Make"
+    }
+  ],
+"display": {
+"b2c3d4e5-f6a7-8901-2345-67890abcdef1": {
+	 "backgroundColor": "#F5FF9F"
+},
+"goal-customer-1": {
+	 "backgroundColor": "#FA1805"
+},
+"goal-startup-1": {
+	 "backgroundColor": "#FA1805"
+},
+"task-customer-1": {
+	 "backgroundColor": "#FA1805"
+},
+"a1b2c3d4-e5f6-7890-1234-567890abcdef": {
+	 "backgroundColor": "#FFFFFF"
+},
+"task-startup-2": {
+	 "backgroundColor": "#FA1805"
+},
+"goal-startup-2": {
+	 "backgroundColor": "#FA1805"
+},
+"task-customer-2": {
+	 "backgroundColor": "#FA1805"
+},
+"task-startup-3": {
+	 "backgroundColor": "#FA1805"
+},
+"quality-customer-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-startup-1": {
+	 "backgroundColor": "#FA1805"
+},
+"c3d4e5f6-a7b8-9012-3456-7890abcdef12": {
+	 "backgroundColor": "#F5FF9F"
+},
+"resource-system-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"resource-system-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-startup-parent": {
+	 "backgroundColor": "#FA1805"
+},
+"resource-customer-1": {
+	 "backgroundColor": "#D8FF22"
+},
+"quality-system-2": {
+	 "backgroundColor": "#FA1805"
+},
+"quality-system-1": {
+	 "backgroundColor": "#FA1805"
+},
+"quality-startup-2": {
+	 "backgroundColor": "#FA1805"
+},
+"dep3": {
+	 "backgroundColor": "#FA1805"
+},
+"dep1": {
+	 "backgroundColor": "#FA1805"
+},
+"dep2": {
+	 "backgroundColor": "#FA1805"
+},
+"quality-startup-1": {
+	 "backgroundColor": "#FA1805"
+},
+"task-system-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"resource-startup-3": {
+	 "backgroundColor": "#77FF12 "
+},
+"resource-startup-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"resource-startup-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"task-system-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"goal-system-1": {
+	 "backgroundColor": "#77FF12 "
+}
+},
+  "istar": "2.0",
+  "saveDate": "Tue, 02 May 2023 10:45:00 GMT",
+  "diagram": {
+    "width": 1400,
+    "height": 1200,
+    "name": "Telemedicine System Final Corrected Model",
+    "customProperties": {
+      "Description": "A final, valid model of the actors, dependencies, goals, tasks, resources, and qualities in the XYZ Telemedicine System, with all link rules correctly applied."
+    }
+  }
+}
+

@@ -1,0 +1,293 @@
+{
+  "actors": [
+    {
+      "id": "las-actor",
+      "text": "London Ambulance Service",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 50,
+      "nodes": [
+        {
+          "id": "main-goal",
+          "text": "Provide timely and appropriate response to patient needs",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 150
+        }
+      ]
+    },
+    {
+      "id": "las-cad-actor",
+      "text": "LAS-CAD",
+      "type": "istar.Actor",
+      "x": 150,
+      "y": 400,
+      "customProperties": {
+        "Description": "The computer-aided despatch software system itself",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "cad-main-goal",
+          "text": "Ambulance Allocated",
+          "type": "istar.Goal",
+          "x": 225,
+          "y": 500
+        },
+        {
+          "id": "cad-task-1",
+          "text": "Find Nearest Ambulance",
+          "type": "istar.Task",
+          "x": 150,
+          "y": 600
+        },
+        {
+          "id": "cad-task-2",
+          "text": "Assign Ambulance to Incident",
+          "type": "istar.Task",
+          "x": 300,
+          "y": 600
+        },
+        {
+          "id": "cad-resource-1",
+          "text": "Incident Location",
+          "type": "istar.Resource",
+          "x": 150,
+          "y": 700
+        },
+        {
+          "id": "cad-resource-2",
+          "text": "Ambulance Status Data",
+          "type": "istar.Resource",
+          "x": 300,
+          "y": 700
+        },
+        {
+          "id": "cad-quality-1",
+          "text": "High System Availability",
+          "type": "istar.Quality",
+          "x": 150,
+          "y": 800
+        },
+        {
+          "id": "cad-quality-2",
+          "text": "Accurate Allocation",
+          "type": "istar.Quality",
+          "x": 300,
+          "y": 800
+        }
+      ]
+    },
+    {
+      "id": "crew-actor",
+      "text": "Ambulance Crew",
+      "type": "istar.Actor",
+      "x": 700,
+      "y": 400,
+      "customProperties": {
+        "Description": "The human agents responsible for operating the ambulance",
+		    "satLevel": 75
+      },
+      "nodes": [
+        {
+          "id": "crew-main-goal",
+          "text": "Ambulance Mobilized",
+          "type": "istar.Goal",
+          "x": 775,
+          "y": 500
+        },
+        {
+          "id": "crew-task-1",
+          "text": "Receive Despatch Instruction",
+          "type": "istar.Task",
+          "x": 700,
+          "y": 600
+        },
+        {
+          "id": "crew-task-2",
+          "text": "Drive to Incident Location",
+          "type": "istar.Task",
+          "x": 850,
+          "y": 600
+        },
+        {
+          "id": "crew-resource-1",
+          "text": "Despatch Instruction",
+          "type": "istar.Resource",
+          "x": 700,
+          "y": 700
+        },
+        {
+          "id": "crew-resource-2",
+          "text": "Vehicle",
+          "type": "istar.Resource",
+          "x": 850,
+          "y": 700
+        },
+        {
+          "id": "crew-quality-1",
+          "text": "Efficient Mobilization",
+          "type": "istar.Quality",
+          "x": 775,
+          "y": 800
+        }
+      ]
+    },
+    {
+      "id": "operator-actor",
+      "text": "Operator",
+      "type": "istar.Actor",
+      "x": 400,
+      "y": 850,
+      "customProperties": {
+        "Description": "The human agent who handles incoming calls and interacts with the system",
+		    "satLevel": 50
+      },
+      "nodes": [
+        {
+          "id": "operator-goal",
+          "text": "Incident Details Provided",
+          "type": "istar.Goal",
+          "x": 450,
+          "y": 950
+        },
+        {
+          "id": "operator-task",
+          "text": "Enter Incident Details into LAS-CAD",
+          "type": "istar.Task",
+          "x": 450,
+          "y": 1050
+        },
+        {
+          "id": "operator-resource",
+          "text": "Caller Information",
+          "type": "istar.Resource",
+          "x": 450,
+          "y": 1150
+        },
+        {
+          "id": "operator-quality",
+          "text": "Accurate Incident Details",
+          "type": "istar.Quality",
+          "x": 450,
+          "y": 1250
+        }
+      ]
+    }
+  ],
+  "orphans": [],
+  "dependencies": [
+    { "id": "dep-main-cad", "text": "Ambulance Allocated", "type": "istar.Goal", "source": "main-goal", "target": "cad-main-goal" },
+    { "id": "dep-main-crew", "text": "Ambulance Mobilized", "type": "istar.Goal", "source": "main-goal", "target": "crew-main-goal" },
+    { "id": "dep-cad-operator", "text": "Incident Details Provided", "type": "istar.Goal", "source": "cad-task-1", "target": "operator-goal" }
+  ],
+  "links": [
+    { "id": "link-dep-1s", "type": "istar.DependencyLink", "source": "main-goal", "target": "dep-main-cad" },
+    { "id": "link-dep-1t", "type": "istar.DependencyLink", "source": "dep-main-cad", "target": "cad-main-goal" },
+    { "id": "link-dep-2s", "type": "istar.DependencyLink", "source": "main-goal", "target": "dep-main-crew" },
+    { "id": "link-dep-2t", "type": "istar.DependencyLink", "source": "dep-main-crew", "target": "crew-main-goal" },
+    { "id": "link-dep-3s", "type": "istar.DependencyLink", "source": "cad-task-1", "target": "dep-cad-operator" },
+    { "id": "link-dep-3t", "type": "istar.DependencyLink", "source": "dep-cad-operator", "target": "operator-goal" },
+    { "id": "ref-cad-1", "type": "istar.AndRefinementLink", "source": "cad-task-1", "target": "cad-main-goal" },
+    { "id": "ref-cad-2", "type": "istar.AndRefinementLink", "source": "cad-task-2", "target": "cad-main-goal" },
+    { "id": "ref-crew-1", "type": "istar.AndRefinementLink", "source": "crew-task-1", "target": "crew-main-goal" },
+    { "id": "ref-crew-2", "type": "istar.AndRefinementLink", "source": "crew-task-2", "target": "crew-main-goal" },
+    { "id": "ref-op-1", "type": "istar.AndRefinementLink", "source": "operator-task", "target": "operator-goal" },
+    { "id": "needed-op-1", "type": "istar.NeededByLink", "source": "operator-resource", "target": "operator-task" },
+    { "id": "needed-cad-1", "type": "istar.NeededByLink", "source": "cad-resource-1", "target": "cad-task-1" },
+    { "id": "needed-cad-2", "type": "istar.NeededByLink", "source": "cad-resource-2", "target": "cad-task-1" },
+    { "id": "needed-cad-3", "type": "istar.NeededByLink", "source": "cad-resource-2", "target": "cad-task-2" },
+    { "id": "needed-crew-1", "type": "istar.NeededByLink", "source": "crew-resource-1", "target": "crew-task-1" },
+    { "id": "needed-crew-2", "type": "istar.NeededByLink", "source": "crew-resource-2", "target": "crew-task-2" },
+    { "id": "contrib-op-1", "type": "istar.ContributionLink", "source": "operator-resource", "target": "operator-quality", "label": "Make" },
+    { "id": "contrib-cad-1", "type": "istar.ContributionLink", "source": "cad-main-goal", "target": "cad-quality-1", "label": "Help" },
+    { "id": "contrib-cad-2", "type": "istar.ContributionLink", "source": "cad-task-1", "target": "cad-quality-2", "label": "Make" },
+    { "id": "contrib-cad-3", "type": "istar.ContributionLink", "source": "cad-task-2", "target": "cad-quality-2", "label": "Make" },
+    { "id": "contrib-crew-1", "type": "istar.ContributionLink", "source": "crew-task-2", "target": "crew-quality-1", "label": "Make" }
+  ],
+"display": {
+"cad-quality-1": {
+	 "backgroundColor": "#FA1805"
+},
+"cad-quality-2": {
+	 "backgroundColor": "#FA1805"
+},
+"main-goal": {
+	 "backgroundColor": "#77FF12 "
+},
+"crew-actor": {
+	 "backgroundColor": "#F5FF9F"
+},
+"dep-main-cad": {
+	 "backgroundColor": "#77FF12 "
+},
+"crew-quality-1": {
+	 "backgroundColor": "#FA1805"
+},
+"operator-goal": {
+	 "backgroundColor": "#77FF12 "
+},
+"operator-quality": {
+	 "backgroundColor": "#FA1805"
+},
+"dep-main-crew": {
+	 "backgroundColor": "#77FF12 "
+},
+"las-actor": {
+	 "backgroundColor": "#77FF12 "
+},
+"cad-task-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"cad-task-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"dep-cad-operator": {
+	 "backgroundColor": "#77FF12 "
+},
+"crew-main-goal": {
+	 "backgroundColor": "#77FF12 "
+},
+"cad-resource-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"operator-actor": {
+	 "backgroundColor": "#FFFFFF"
+},
+"operator-task": {
+	 "backgroundColor": "#77FF12 "
+},
+"cad-resource-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"las-cad-actor": {
+	 "backgroundColor": "#FFFFFF"
+},
+"crew-task-1": {
+	 "backgroundColor": "#77FF12 "
+},
+"cad-main-goal": {
+	 "backgroundColor": "#77FF12 "
+},
+"crew-task-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"crew-resource-2": {
+	 "backgroundColor": "#77FF12 "
+},
+"crew-resource-1": {
+	 "backgroundColor": "#77FF12 "
+}
+},
+  "istar": "2.0",
+  "saveDate": "Wed, 03 May 2023 13:00:00 GMT",
+  "diagram": {
+    "width": 1200,
+    "height": 1400,
+    "name": "London Ambulance Despatching System - Corrected",
+    "customProperties": {
+      "Description": "A goal model for the London Ambulance Despatching System with corrected link types for qualities."
+    }
+  }
+}
+
