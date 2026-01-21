@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class ILPProblem {
-	private List<Integer> variables;
+	private List<Integer> variables,nonIntegerVariables;
 	private HashMap<Object, Integer> mNamesToID;
 	private HashMap<Integer, Object> mIDToName;
 	private ObjectiveFunction objectiveFunction;
@@ -30,6 +30,11 @@ public class ILPProblem {
 		boundingConstraints = new HashMap<Integer, Bounding>();
 		equalityConstraints = new LinkedList<LinearConstraint>();
 		objectiveFunction = new ObjectiveFunction();
+		nonIntegerVariables=new ArrayList<Integer>();
+	}
+	
+	public void addNonIntegerVariable(Integer index) {
+		nonIntegerVariables.add(index);
 	}
 
 	public Boolean isRegistered(Object key) {
@@ -151,7 +156,10 @@ public class ILPProblem {
 			// especificamos que todas las variables son enteras.
 			String intConString = "intcon = [";
 			for (int i = 0; i < variables.size(); i++) {
-				intConString = intConString + (i + 1) + ",";
+				Integer var=i+1;
+				if(!nonIntegerVariables.contains(var)) {
+					intConString = intConString + var + ",";
+				}
 			}
 			// se modifica el final de la cadena
 			intConString = intConString.substring(0, intConString.length() - 1) + "];";
@@ -240,8 +248,4 @@ public class ILPProblem {
 		objectiveFunction = new ObjectiveFunction();
 		objectiveFunction.setTerms(terms);
 	}
-	
-	
-	
-	
 }

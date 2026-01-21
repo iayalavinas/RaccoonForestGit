@@ -68,6 +68,10 @@ public class UVLTranslator {
 		problem = i;
 		featureModelFile = file;
 	}
+	
+	public ILPProblem getProblem() {
+		return problem;
+	}
 
 	private Boolean isClon(Feature fea) {
 		return clonAndClonableRegistry.containsKey(fea);
@@ -2437,7 +2441,7 @@ public class UVLTranslator {
 		return res;
 	}
 
-	private void getFeatures(Feature feature, List<Feature> featureList) {
+	public void getFeatures(Feature feature, List<Feature> featureList) {
 		for (Group group : feature.getChildren()) {
 			for (Feature childFeature : group.getFeatures()) {
 				featureList.add(childFeature);
