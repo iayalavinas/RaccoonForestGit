@@ -6,6 +6,11 @@ public class Bounding {
 	
 	private Integer min,max;
 	
+	public Bounding() {
+		min=0;
+		max=0;
+	}
+	
 	public Bounding(int n,int x) {
 		min=n;
 		max=x;

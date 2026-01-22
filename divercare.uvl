@@ -83,10 +83,8 @@ constraints
     ("Emergency button" | Video | "Automatic door") => "Home Gateway"
     "Fall detection System" => ("Hip accelerometer" | "Chest accelerometer")
     "Phone-alarm" => App
-    100>HipAccuracy
-    HipAccuracy>0
-    100>ChestAccuracy
-    ChestAccuracy>0
+    (100>HipAccuracy) & (HipAccuracy>0)
+    (100>ChestAccuracy) & (ChestAccuracy>0)
     (PIR | Microwave | Ultrasonic) => "Home Gateway"
 	//"User Activity Level"  => "Activity level"
    // "User DLA" => "Daily living activities"

@@ -40,6 +40,7 @@ import de.vill.model.constraint.ParenthesisConstraint;
 import de.vill.model.expression.Expression;
 import de.vill.model.expression.LiteralExpression;
 import de.vill.model.expression.NumberExpression;
+import ilp.iav.caosd.uma.Bounding;
 import ilp.iav.caosd.uma.Comparator;
 import ilp.iav.caosd.uma.ILPProblem;
 import ilp.iav.caosd.uma.LinearConstraint;
@@ -62,13 +63,14 @@ public class UVLTranslator {
 	private HashMap<Feature, Feature> clonAndClonableRegistry = new HashMap<Feature, Feature>();
 	// Estructura que guarda una característica clonable y todos sus clones.
 	private HashMap<Feature, List<Feature>> clonableAndClonListRegistry = new HashMap<Feature, List<Feature>>();
+	private HashMap<Integer,Bounding> originalBounding=new HashMap<Integer,Bounding>();
 
 	public UVLTranslator(FeatureModel m, ILPProblem i, String file) {
 		model = m;
 		problem = i;
 		featureModelFile = file;
 	}
-	
+
 	public ILPProblem getProblem() {
 		return problem;
 	}
@@ -79,6 +81,8 @@ public class UVLTranslator {
 
 	// convierte el modelo en una serie de restricciones lineales.
 	public void translateModel() {
+		// traducción de crostree constraints
+		temporalConstraintList.addAll(model.getConstraints());
 
 		List<Feature> featureList = new LinkedList<Feature>();
 		int index;
@@ -151,8 +155,7 @@ public class UVLTranslator {
 				addGroups(featureList.get(i));
 			}
 		}
-		// traducción de crostree constraints
-		temporalConstraintList.addAll(model.getConstraints());
+		
 		// replace clonables with clons
 		replaceClonables();
 		// se transforma en CNF
@@ -164,6 +167,164 @@ public class UVLTranslator {
 		 * restricciones al modelo transformInLinearConstraints();
 		 */
 		transformInLCwithLogicNG();
+	}
+	
+	private Boolean isComparisonConstraint(ExpressionConstraint cons) {
+		return (cons instanceof GreaterEqualsEquationConstraint)||(cons instanceof GreaterEquationConstraint)||
+				 (cons instanceof LowerEqualsEquationConstraint)||(cons instanceof LowerEquationConstraint);
+	}
+	
+	private Boolean isNumericalComparison(ExpressionConstraint cons) {
+		Expression left=cons.getLeft();
+		Expression right=cons.getRight();
+		return ((left instanceof LiteralExpression)&&(right instanceof NumberExpression))||
+				((right instanceof LiteralExpression)&&(left instanceof NumberExpression));
+	}
+	
+	// los boundings pueden ser sobre numéricas o atributos, nos quedamos con LiteralExpression para simplificar.
+	private LiteralExpression extractLiteral(ExpressionConstraint exp){
+		Expression left,right;
+		left=exp.getLeft();
+		right=exp.getRight();
+		LiteralExpression res=null;
+		if(left instanceof LiteralExpression) {
+			res=((LiteralExpression) left);
+		}else if(right instanceof LiteralExpression){
+			res=((LiteralExpression)right);
+		}
+		return res;
+	}
+	
+	private Constraint removeParenthesis(Constraint cons) {
+		if(cons instanceof ParenthesisConstraint) {
+			cons=((ParenthesisConstraint)cons).getContent();
+		}
+		return cons;
+	}
+	
+	
+	private Boolean isBoundingConstraint(Constraint cons) {
+		Boolean res=false;
+		if(cons instanceof AndConstraint) {
+			Constraint left,right;
+			left=((AndConstraint)cons).getLeft();
+			right=((AndConstraint)cons).getRight();
+			// si la expresión está dentro de un paréntesis (lo habitual) se extrae.
+			left=removeParenthesis(left);
+			right=removeParenthesis(right);
+			// comprobamos que es un AND de expression
+			if((left instanceof ExpressionConstraint)&&(right instanceof ExpressionConstraint)) {
+				if(isComparisonConstraint((ExpressionConstraint)left) && (isComparisonConstraint((ExpressionConstraint)right))) {
+					if(isNumericalComparison((ExpressionConstraint)left) && isNumericalComparison((ExpressionConstraint)right)) {
+						LiteralExpression leftExp=extractLiteral((ExpressionConstraint)left);
+						LiteralExpression rightExp=extractLiteral((ExpressionConstraint)right);
+						res=leftExp.equals(rightExp);
+					}
+				}
+			}
+		}
+		return res;
+	}
+	
+	private Integer getVariableIndex(AndConstraint cons) {
+		Integer res=null;
+		LiteralExpression le=null;
+		Constraint left=removeParenthesis(cons.getLeft());
+		if(left instanceof GreaterEqualsEquationConstraint) {
+			// en qué lado está el literal.
+			 GreaterEqualsEquationConstraint geec=(GreaterEqualsEquationConstraint)left;
+			 if(geec.getLeft() instanceof LiteralExpression) {
+				 le=(LiteralExpression)geec.getLeft();
+			 }else {
+				 le=(LiteralExpression)geec.getRight();
+			 }		
+		}else if(left instanceof GreaterEquationConstraint) {
+			// en qué lado está el literal.
+			 GreaterEquationConstraint gec=(GreaterEquationConstraint)left;
+			 if(gec.getLeft() instanceof LiteralExpression) {
+				 le=(LiteralExpression)gec.getLeft();
+			 }else {
+				 le=(LiteralExpression)gec.getRight();
+			 }
+		}else if(left instanceof LowerEqualsEquationConstraint) {
+			LowerEqualsEquationConstraint leec=(LowerEqualsEquationConstraint)left;
+			if(leec.getLeft() instanceof LiteralExpression) {
+				le=(LiteralExpression)leec.getLeft();
+			}else {
+				le=(LiteralExpression)leec.getRight();
+			}
+		}else if(left instanceof LowerEquationConstraint) {
+			LowerEquationConstraint lec=(LowerEquationConstraint)left;
+			if(lec.getLeft() instanceof LiteralExpression) {
+				le=(LiteralExpression)lec.getLeft();
+			}else {
+				le=(LiteralExpression)lec.getRight();
+			}
+		}
+		if (le != null) {
+			if (le.getAttribute() == null) {
+				res = problem.getIndex(le.getFeature());
+				// está establecido sobre un atributo
+			} else {
+				res = problem.getIndex(le.getAttribute());
+			}
+		}
+		return res;
+	}
+	
+	private void getBounding(Constraint cons,Bounding bound) {
+		Double lowerBound=null,upperBound=null;
+		
+		cons=removeParenthesis(cons);
+		if(cons instanceof GreaterEqualsEquationConstraint) {
+			// en qué lado está el literal.
+			 GreaterEqualsEquationConstraint geec=(GreaterEqualsEquationConstraint)cons;
+			 if(geec.getLeft() instanceof LiteralExpression) {
+				 lowerBound=((NumberExpression)geec.getRight()).getNumber();
+			 }else {
+				 upperBound=((NumberExpression)geec.getLeft()).getNumber();
+			 }		
+		}else if(cons instanceof GreaterEquationConstraint) {
+			// en qué lado está el literal.
+			 GreaterEquationConstraint gec=(GreaterEquationConstraint)cons;
+			 if(gec.getLeft() instanceof LiteralExpression) {
+				 lowerBound=((NumberExpression)gec.getRight()).getNumber()+1;
+			 }else {
+				 upperBound=((NumberExpression)gec.getLeft()).getNumber()-1;
+			 }
+		}else if(cons instanceof LowerEqualsEquationConstraint) {
+			LowerEqualsEquationConstraint leec=(LowerEqualsEquationConstraint)cons;
+			if(leec.getLeft() instanceof LiteralExpression) {
+				upperBound=((NumberExpression)leec.getRight()).getNumber();
+			}else {
+				lowerBound=((NumberExpression)leec.getLeft()).getNumber();
+			}
+		}else if(cons instanceof LowerEquationConstraint) {
+			LowerEquationConstraint lec=(LowerEquationConstraint)cons;
+			if(lec.getLeft() instanceof LiteralExpression) {
+				upperBound=((NumberExpression)lec.getRight()).getNumber()-1;
+			}else {
+				lowerBound=((NumberExpression)lec.getLeft()).getNumber()+1;
+			}
+		}
+		if(lowerBound!=null)bound.setMin(lowerBound.intValue());
+		if(upperBound!=null)bound.setMax(upperBound.intValue());
+	}
+	
+	
+	
+	private void processBoundingConstraint(AndConstraint cons) {			
+		Integer variableIndex=getVariableIndex(cons);
+		Bounding bound=new Bounding();
+		Integer upperBound=bound.getMax();
+		getBounding(cons.getLeft(), bound);
+		getBounding(cons.getRight(),bound);
+		System.out.println(variableIndex+" "+bound.toString());
+		originalBounding.put(variableIndex, bound);
+		if (bound.getMin() != 0) {
+			upperBound = upperBound - bound.getMin() + 1;
+		}
+		problem.addBoundingConstraint(variableIndex, 0, upperBound);
 	}
 
 	private void transformInLCwithLogicNG() {
@@ -177,12 +338,14 @@ public class UVLTranslator {
 				// transformExpressionConstraint((ExpressionConstraint)temporalConstraintList.get(i));
 			} else {
 				// System.out.println("Antes: "+temporalConstraintList.get(i));
-				temp = translateFormula(temporalConstraintList.get(i), f);
-				transformed = temp.transform(tseitinTrans);
-				// System.out.println("Despues: "+transformed);
-				// el resultado es una conjunción de OR
-				// debemos obtener todas las conjunciones y meterlas una a una.
-				transformInLC(transformed.toString());
+				if (!isBoundingConstraint(temporalConstraintList.get(i))) {
+					temp = translateFormula(temporalConstraintList.get(i), f);
+					transformed = temp.transform(tseitinTrans);
+					// System.out.println("Despues: "+transformed);
+					// el resultado es una conjunción de OR
+					// debemos obtener todas las conjunciones y meterlas una a una.
+					transformInLC(transformed.toString());
+				}
 			}
 		}
 
@@ -269,99 +432,6 @@ public class UVLTranslator {
 			res = translateFormula(par.getContent(), factory);
 		}
 		return res;
-	}
-
-	private void transformInLinearConstraints() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof ExpressionConstraint) {
-				// TO-DO: Transforamcion de expression constraint entre características a
-				// expresión lineal
-				// transformExpressionConstraint((ExpressionConstraint)temporalConstraintList.get(i));
-			} else {
-				List<Term> termList = new LinkedList<Term>();
-				transformInLinearConstraints(temporalConstraintList.get(i), termList);
-				Integer acum = numberOfPostiveTerms(termList);
-				LinearConstraint lc = new LinearConstraint(termList, -1 + acum, Comparator.LowerOrEqual);
-				problem.addConstraint(lc);
-			}
-		}
-	}
-
-	private int numberOfPostiveTerms(List<Term> list) {
-		int res = 0;
-		for (int i = 0; i < list.size(); i++) {
-			Term term = list.get(i);
-			if (term.getWeight() > 0) {
-				res++;
-			}
-		}
-		return res;
-	}
-
-	private void transformInLinearConstraints(Constraint cons, List<Term> termList) {
-
-		if (cons instanceof LiteralConstraint) {
-			// se obtiene el indice del líteral
-			LiteralConstraint lit = (LiteralConstraint) cons;
-			// puede ser una fake constraint
-			int index = (lit.getFeature() != null ? problem.getIndex(lit.getFeature())
-					: problem.getIndex(lit.getLiteral()));
-			termList.add(new Term(-1d, index));
-		} else if (cons instanceof NotConstraint) {
-			NotConstraint notCons = (NotConstraint) cons;
-			if (notCons.getContent() instanceof LiteralConstraint) {
-				// se obtiene el indice del líteral
-				LiteralConstraint lit = (LiteralConstraint) notCons.getContent();
-				// puede ser una fake constraint
-				int index = (lit.getFeature() != null ? problem.getIndex(lit.getFeature())
-						: problem.getIndex(lit.getLiteral()));
-				termList.add(new Term(1d, index));
-			}
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof LiteralConstraint) {
-				LiteralConstraint litCons = (LiteralConstraint) orCons.getLeft();
-				// puede ser una fake constraint
-				int index = (litCons.getFeature() != null ? problem.getIndex(litCons.getFeature())
-						: problem.getIndex(litCons.getLiteral()));
-				termList.add(new Term(-1d, index));
-			} else if (orCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) orCons.getLeft();
-				if (notCons.getContent() instanceof LiteralConstraint) {
-					// se obtiene el indice del líteral
-					LiteralConstraint lit = (LiteralConstraint) notCons.getContent();
-					// puede ser una fake constraint
-					int index = (lit.getFeature() != null ? problem.getIndex(lit.getFeature())
-							: problem.getIndex(lit.getLiteral()));
-					termList.add(new Term(1d, index));
-				}
-			} else if (orCons.getLeft() instanceof OrConstraint) {
-				OrConstraint intOrCons = (OrConstraint) orCons.getLeft();
-				transformInLinearConstraints(intOrCons, termList);
-			}
-			if (orCons.getRight() instanceof LiteralConstraint) {
-				LiteralConstraint litCons = (LiteralConstraint) orCons.getRight();
-				// puede ser una fake constraint
-				int index = (litCons.getFeature() != null ? problem.getIndex(litCons.getFeature())
-						: problem.getIndex(litCons.getLiteral()));
-				termList.add(new Term(-1d, index));
-			} else if (orCons.getRight() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) orCons.getRight();
-				if (notCons.getContent() instanceof LiteralConstraint) {
-					// se obtiene el indice del líteral
-					LiteralConstraint lit = (LiteralConstraint) notCons.getContent();
-					// puede ser una fake constraint
-					int index = (lit.getFeature() != null ? problem.getIndex(lit.getFeature())
-							: problem.getIndex(lit.getLiteral()));
-					termList.add(new Term(1d, index));
-				}
-			} else if (orCons.getRight() instanceof OrConstraint) {
-				OrConstraint intOrCons = (OrConstraint) orCons.getRight();
-				transformInLinearConstraints(intOrCons, termList);
-			}
-
-		}
-
 	}
 
 	private Boolean existClonable(Constraint cons) {
@@ -495,1019 +565,9 @@ public class UVLTranslator {
 	private void replaceClonables() {
 		while (existClonable()) {
 			replaceClonable();
-
 		}
 	}
 
-	private void transformInCNF() {
-		// iteramos en el modelo hasta que quitamos los paréntesis
-		while (existParenthesis()) {
-			removeParenthesis();
-		}
-
-		// iteramos en el modelos hasta que sustituimos todas las expresiones
-		// aritméticas por variables
-		// TO-DO: ¿Cómo sacamos al aritmética de la expresión lógica?
-
-		// aplicamos el algoritmo de la CNF
-		// 1. Eliminar todas las implicaciones usando A->B = !A||B y
-		// A<->B=(A->B)&&(B->A)
-		// System.out.println("Se eliminan los equivalence constraints.");
-		while (existEquivalenceConstraint()) {
-			removeEquivalenceConstraint();
-		}
-
-		// System.out.println("Se eliminan las implicaciones");
-		while (existImpicationContraint()) {
-			removeImplicationConstraint();
-		}
-
-		// 2.Trasladar negaciones aplicando las leyes de Morgan
-		// System.out.println("Se aplican las leyes de Morgan");
-		while (existNotAndNotOr()) {
-			removeNotAnd();
-			removeNotOr();
-		}
-
-		// 3. Eliminar negaciones dobles
-		// System.out.println("Se quitan las negaciones dobles.");
-		while (existDoubleNegation()) {
-			removeDoubleNegation();
-		}
-
-		// 4. Aplicar la ley distributiva
-		// System.out.println("Se aplica la ley distributiva");
-		while (existDistributableExpression()) {
-			applyDistributiveProperty();
-		}
-
-		// 5. Partir las expresiones usando los AND
-		// System.out.println("Se parten las expresiones usando AND");
-		while (existAnd()) {
-			splitAndConstraint();
-		}
-
-	}
-
-	private void printConstraints() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			System.out.println(temporalConstraintList.get(i));
-		}
-	}
-
-	private void applyDistributiveProperty(OrConstraint orCons, Constraint cons) {
-
-		AndConstraint andCons = (orCons.getLeft() instanceof AndConstraint ? (AndConstraint) orCons.getLeft()
-				: (AndConstraint) orCons.getRight());
-		if ((orCons.getLeft() instanceof LiteralConstraint) || (orCons.getRight() instanceof LiteralConstraint)) {
-			LiteralConstraint litCons = (orCons.getLeft() instanceof LiteralConstraint
-					? (LiteralConstraint) orCons.getLeft()
-					: (LiteralConstraint) orCons.getRight());
-			OrConstraint orCons1 = new OrConstraint(litCons, andCons.getLeft());
-			OrConstraint orCons2 = new OrConstraint(litCons, andCons.getRight());
-			AndConstraint newAndCons = new AndConstraint(orCons1, orCons2);
-			cons.replaceConstraintSubPart(orCons, newAndCons);
-		} else {
-			NotConstraint notCons = (orCons.getLeft() instanceof NotConstraint ? (NotConstraint) orCons.getLeft()
-					: (NotConstraint) orCons.getRight());
-			OrConstraint orCons1 = new OrConstraint(notCons, andCons.getLeft());
-			OrConstraint orCons2 = new OrConstraint(notCons, andCons.getRight());
-			AndConstraint newAndCons = new AndConstraint(orCons1, orCons2);
-			cons.replaceConstraintSubPart(orCons, newAndCons);
-		}
-	}
-
-	// estoy rehaciendo este método.
-	private void applyDistributiveProperty(Constraint cons) {
-
-		if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof OrConstraint) {
-				if (isDistributable((OrConstraint) orCons.getLeft())) {
-					applyDistributiveProperty((OrConstraint) orCons.getLeft(), orCons);
-				} else {
-					applyDistributiveProperty(orCons.getLeft());
-				}
-			} else {
-				applyDistributiveProperty(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof OrConstraint) {
-				if (isDistributable((OrConstraint) orCons.getRight())) {
-					applyDistributiveProperty((OrConstraint) orCons.getRight(), orCons);
-				} else {
-					applyDistributiveProperty(orCons.getRight());
-				}
-			} else {
-				applyDistributiveProperty(orCons.getRight());
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof OrConstraint) {
-				if (isDistributable((OrConstraint) andCons.getLeft())) {
-					applyDistributiveProperty((OrConstraint) andCons.getLeft(), andCons);
-				} else {
-					applyDistributiveProperty(andCons.getLeft());
-				}
-			} else {
-				applyDistributiveProperty(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof OrConstraint) {
-				if (isDistributable((OrConstraint) andCons.getRight())) {
-					applyDistributiveProperty((OrConstraint) andCons.getRight(), andCons);
-				} else {
-					applyDistributiveProperty(andCons.getRight());
-				}
-			} else {
-				applyDistributiveProperty(andCons.getRight());
-			}
-		}
-
-	}
-
-	private void applyDistributiveProperty() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof OrConstraint) {
-				OrConstraint orCons = (OrConstraint) temporalConstraintList.get(i);
-				if (isDistributable(orCons)) {
-					AndConstraint andCons = (orCons.getLeft() instanceof AndConstraint
-							? (AndConstraint) orCons.getLeft()
-							: (AndConstraint) orCons.getRight());
-					if ((orCons.getLeft() instanceof LiteralConstraint)
-							|| (orCons.getRight() instanceof LiteralConstraint)) {
-						LiteralConstraint litCons = (orCons.getLeft() instanceof LiteralConstraint
-								? (LiteralConstraint) orCons.getLeft()
-								: (LiteralConstraint) orCons.getRight());
-
-						OrConstraint orCons1 = new OrConstraint(litCons, andCons.getLeft());
-						OrConstraint orCons2 = new OrConstraint(litCons, andCons.getRight());
-						AndConstraint newAndCons = new AndConstraint(orCons1, orCons2);
-						temporalConstraintList.set(i, newAndCons);
-					} else {
-						NotConstraint notCons = (orCons.getLeft() instanceof NotConstraint
-								? (NotConstraint) orCons.getLeft()
-								: (NotConstraint) orCons.getRight());
-						OrConstraint orCons1 = new OrConstraint(notCons, andCons.getLeft());
-						OrConstraint orCons2 = new OrConstraint(notCons, andCons.getRight());
-						AndConstraint newAndCons = new AndConstraint(orCons1, orCons2);
-						temporalConstraintList.set(i, newAndCons);
-					}
-
-				} else {
-					applyDistributiveProperty(temporalConstraintList.get(i));
-				}
-			} else {
-				applyDistributiveProperty(temporalConstraintList.get(i));
-			}
-		}
-	}
-
-	private Boolean isDistributable(OrConstraint cons) {
-		Boolean res = (((cons.getLeft() instanceof LiteralConstraint) || isNotLiteral(cons.getLeft()))
-				&& (cons.getRight() instanceof AndConstraint))
-
-				|| (((cons.getRight() instanceof LiteralConstraint) || (isNotLiteral(cons.getRight())))
-						&& (cons.getLeft() instanceof AndConstraint));
-
-		return res;
-	}
-
-	private Boolean isNotLiteral(Constraint cons) {
-		Boolean res = false;
-		if (cons instanceof NotConstraint) {
-			res = ((NotConstraint) cons).getContent() instanceof LiteralConstraint;
-		}
-		return res;
-
-	}
-
-	private Boolean existDistributableExpression(Constraint cons) {
-		Boolean res = false;
-
-		if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			res = isDistributable(orCons);
-			if (!res) {
-				res = (existDistributableExpression(orCons.getLeft()))
-						|| (existDistributableExpression(orCons.getRight()));
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andConstraint = (AndConstraint) cons;
-			res = (existDistributableExpression(andConstraint.getLeft()))
-					|| (existDistributableExpression(andConstraint.getRight()));
-		}
-		return res;
-	}
-
-	private Boolean existDistributableExpression() {
-		Boolean res = false;
-		int index = 0;
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof OrConstraint) {
-				OrConstraint orCons = (OrConstraint) temporalConstraintList.get(index);
-				res = isDistributable(orCons);
-			} else {
-				res = existDistributableExpression(temporalConstraintList.get(index));
-			}
-			/*
-			 * if (res) System.out.println(temporalConstraintList.get(index));
-			 */
-			index++;
-		}
-
-		return res;
-	}
-
-	private void splitAndConstraint() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof AndConstraint) {
-				AndConstraint andCons = (AndConstraint) temporalConstraintList.get(i);
-				temporalConstraintList.set(i, andCons.getLeft());
-				temporalConstraintList.add(andCons.getRight());
-			} else {
-
-			}
-		}
-
-	}
-
-	private Boolean existAnd(Constraint cons) {
-		Boolean res = false;
-
-		if (cons instanceof AndConstraint) {
-			res = true;
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			res = (orCons.getLeft() instanceof AndConstraint) || (orCons.getRight() instanceof AndConstraint);
-			if (!res) {
-				res = existAnd(orCons.getLeft()) || existAnd(orCons.getRight());
-			}
-		}
-		return res;
-	}
-
-	private Boolean existAnd() {
-		Boolean res = false;
-		int index = 0;
-
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof AndConstraint) {
-				// System.out.println("And de nivel superior detectado.");
-				res = true;
-			} else {
-				res = existAnd(temporalConstraintList.get(index));
-			}
-			index++;
-		}
-
-		return res;
-	}
-
-	private void removeDoubleNegation() {
-
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof NotConstraint) {
-				NotConstraint extNotConst = (NotConstraint) temporalConstraintList.get(i);
-				if (extNotConst.getContent() instanceof NotConstraint) {
-					NotConstraint intNotCons = (NotConstraint) extNotConst.getContent();
-					temporalConstraintList.set(i, intNotCons.getContent());
-				}
-			} else {
-				removeDoubleNegation(temporalConstraintList.get(i));
-			}
-		}
-	}
-
-	private void removeDoubleNegation(Constraint cons) {
-		if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof NotConstraint) {
-				NotConstraint extNotCons = (NotConstraint) orCons.getLeft();
-				if (extNotCons.getContent() instanceof NotConstraint) {
-					NotConstraint intNotCons = (NotConstraint) extNotCons.getContent();
-					cons.replaceConstraintSubPart(orCons.getLeft(), intNotCons.getContent());
-				}
-			} else {
-				removeDoubleNegation(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof NotConstraint) {
-				NotConstraint extNotCons = (NotConstraint) orCons.getRight();
-				if (extNotCons.getContent() instanceof NotConstraint) {
-					NotConstraint intNotCons = (NotConstraint) extNotCons.getContent();
-					cons.replaceConstraintSubPart(orCons.getRight(), intNotCons.getContent());
-				}
-			} else {
-				removeDoubleNegation(orCons.getRight());
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof NotConstraint) {
-				NotConstraint extNotCons = (NotConstraint) andCons.getLeft();
-				if (extNotCons.getContent() instanceof NotConstraint) {
-					NotConstraint intNotCons = (NotConstraint) extNotCons.getContent();
-					cons.replaceConstraintSubPart(andCons.getLeft(), intNotCons.getContent());
-				}
-			} else {
-				removeDoubleNegation(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof NotConstraint) {
-				NotConstraint extNotCons = (NotConstraint) andCons.getRight();
-				if (extNotCons.getContent() instanceof NotConstraint) {
-					NotConstraint intNotCons = (NotConstraint) extNotCons.getContent();
-					cons.replaceConstraintSubPart(andCons.getRight(), intNotCons.getContent());
-				}
-			} else {
-				removeDoubleNegation(andCons.getRight());
-			}
-		}
-	}
-
-	private Boolean existDoubleNegation() {
-		Boolean res = false;
-		int index = 0;
-
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) temporalConstraintList.get(index);
-				res = notCons.getContent() instanceof NotConstraint;
-			} else {
-				// dig deeper
-				res = existDoubleNegation(temporalConstraintList.get(index));
-			}
-			index++;
-		}
-		return res;
-	}
-
-	private Boolean existDoubleNegation(Constraint cons) {
-		Boolean res = false;
-
-		if (cons instanceof NotConstraint) {
-			NotConstraint notCons = (NotConstraint) cons;
-			res = (notCons.getContent() instanceof NotConstraint);
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notAux = (NotConstraint) orCons.getLeft();
-				res = (notAux.getContent() instanceof NotConstraint);
-			} else {
-				res = existDoubleNegation(orCons.getLeft());
-			}
-			if (!res) {
-				if (orCons.getRight() instanceof NotConstraint) {
-					NotConstraint notAux = (NotConstraint) orCons.getRight();
-					res = (notAux.getContent() instanceof NotConstraint);
-				} else {
-					res = existDoubleNegation(orCons.getRight());
-				}
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notAux = (NotConstraint) andCons.getLeft();
-				res = (notAux.getContent() instanceof NotConstraint);
-			} else {
-				res = existDoubleNegation(andCons.getLeft());
-			}
-			if (!res) {
-				if (andCons.getRight() instanceof NotConstraint) {
-					NotConstraint notAux = (NotConstraint) andCons.getRight();
-					res = (notAux.getContent() instanceof NotConstraint);
-				} else {
-					res = existDoubleNegation(andCons.getRight());
-				}
-			}
-		}
-		return res;
-	}
-
-	private void removeNotAnd() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) temporalConstraintList.get(i);
-				if (notCons.getContent() instanceof AndConstraint) {
-					AndConstraint andCons = (AndConstraint) notCons.getContent();
-					OrConstraint orCons = new OrConstraint(new NotConstraint(andCons.getLeft()),
-							new NotConstraint(andCons.getRight()));
-					temporalConstraintList.set(i, orCons);
-				}
-			} else {
-				removeNotAnd(temporalConstraintList.get(i));
-			}
-		}
-	}
-
-	private void removeNotAnd(Constraint cons) {
-		if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) orCons.getLeft();
-				if (notCons.getContent() instanceof AndConstraint) {
-					AndConstraint andCons = (AndConstraint) notCons.getContent();
-					OrConstraint auxOrCons = new OrConstraint(new NotConstraint(andCons.getLeft()),
-							new NotConstraint(andCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxOrCons);
-				}
-			} else {
-				removeNotAnd(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) orCons.getRight();
-				if (notCons.getContent() instanceof AndConstraint) {
-					AndConstraint andCons = (AndConstraint) notCons.getContent();
-					OrConstraint auxOrCons = new OrConstraint(new NotConstraint(andCons.getLeft()),
-							new NotConstraint(andCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxOrCons);
-				}
-			} else {
-				removeNotAnd(orCons.getRight());
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) andCons.getLeft();
-				if (notCons.getContent() instanceof AndConstraint) {
-					AndConstraint auxAndCons = (AndConstraint) notCons.getContent();
-					OrConstraint auxOrCons = new OrConstraint(new NotConstraint(auxAndCons.getLeft()),
-							new NotConstraint(auxAndCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxOrCons);
-				}
-			} else {
-				removeNotAnd(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) andCons.getRight();
-				if (notCons.getContent() instanceof AndConstraint) {
-					AndConstraint auxAndCons = (AndConstraint) notCons.getContent();
-					OrConstraint auxOrCons = new OrConstraint(new NotConstraint(auxAndCons.getLeft()),
-							new NotConstraint(auxAndCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxOrCons);
-				}
-			} else {
-				removeNotAnd(andCons.getRight());
-			}
-		}
-	}
-
-	private void removeNotOr() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) temporalConstraintList.get(i);
-				if (notCons.getContent() instanceof OrConstraint) {
-					OrConstraint orCons = (OrConstraint) notCons.getContent();
-					AndConstraint andCons = new AndConstraint(new NotConstraint(orCons.getLeft()),
-							new NotConstraint(orCons.getRight()));
-					temporalConstraintList.set(i, andCons);
-				}
-			} else {
-				removeNotOr(temporalConstraintList.get(i));
-			}
-		}
-	}
-
-	private void removeNotOr(Constraint cons) {
-		if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) orCons.getLeft();
-				if (notCons.getContent() instanceof OrConstraint) {
-					OrConstraint auxOrCons = (OrConstraint) notCons.getContent();
-					AndConstraint auxAndCons = new AndConstraint(new NotConstraint(auxOrCons.getLeft()),
-							new NotConstraint(auxOrCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxAndCons);
-				}
-			} else {
-				removeNotOr(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) orCons.getRight();
-				if (notCons.getContent() instanceof OrConstraint) {
-					OrConstraint auxOrCons = (OrConstraint) notCons.getContent();
-					AndConstraint auxAndCons = new AndConstraint(new NotConstraint(auxOrCons.getLeft()),
-							new NotConstraint(auxOrCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxAndCons);
-				}
-			} else {
-				removeNotOr(orCons.getRight());
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) andCons.getLeft();
-				if (notCons.getContent() instanceof OrConstraint) {
-					OrConstraint auxOrCons = (OrConstraint) notCons.getContent();
-					AndConstraint auxAndCons = new AndConstraint(new NotConstraint(auxOrCons.getLeft()),
-							new NotConstraint(auxOrCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxAndCons);
-				}
-			} else {
-				removeNotOr(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) andCons.getRight();
-				if (notCons.getContent() instanceof OrConstraint) {
-					OrConstraint auxOrCons = (OrConstraint) notCons.getContent();
-					AndConstraint auxAndCons = new AndConstraint(new NotConstraint(auxOrCons.getLeft()),
-							new NotConstraint(auxOrCons.getRight()));
-					cons.replaceConstraintSubPart(notCons, auxAndCons);
-				}
-			} else {
-				removeNotOr(andCons.getRight());
-			}
-		}
-	}
-
-	private Boolean existNotAndNotOr() {
-		Boolean res = false;
-		int index = 0;
-
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof NotConstraint) {
-				NotConstraint notCons = (NotConstraint) temporalConstraintList.get(index);
-				if ((notCons.getContent() instanceof OrConstraint) || (notCons.getContent() instanceof AndConstraint)) {
-					res = true;
-				}
-			} else {
-				res = existNotAndNotOr(temporalConstraintList.get(index));
-
-			}
-			index++;
-		}
-		return res;
-	}
-
-	// en esta fase no hay implication constraint, ni equivalence constraint
-	private Boolean existNotAndNotOr(Constraint cons) {
-		Boolean res = false;
-
-		if (cons instanceof NotConstraint) {
-			NotConstraint notCons = (NotConstraint) cons;
-			res = (notCons.getContent() instanceof OrConstraint) || (notCons.getContent() instanceof AndConstraint);
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notAux = (NotConstraint) orCons.getLeft();
-				res = (notAux.getContent() instanceof OrConstraint) || (notAux.getContent() instanceof AndConstraint);
-			} else {
-				res = existNotAndNotOr(orCons.getLeft());
-			}
-			if (!res) {
-				if (orCons.getRight() instanceof NotConstraint) {
-					NotConstraint notAux = (NotConstraint) orCons.getRight();
-					res = (notAux.getContent() instanceof OrConstraint)
-							|| (notAux.getContent() instanceof AndConstraint);
-				} else {
-					res = existNotAndNotOr(orCons.getRight());
-				}
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof NotConstraint) {
-				NotConstraint notAux = (NotConstraint) andCons.getLeft();
-				res = (notAux.getContent() instanceof OrConstraint) || (notAux.getContent() instanceof AndConstraint);
-			} else {
-				res = existNotAndNotOr(andCons.getLeft());
-			}
-			if (!res) {
-				if (andCons.getRight() instanceof NotConstraint) {
-					NotConstraint notAux = (NotConstraint) andCons.getRight();
-					res = (notAux.getContent() instanceof OrConstraint)
-							|| (notAux.getContent() instanceof AndConstraint);
-				} else {
-					res = existNotAndNotOr(andCons.getRight());
-				}
-			}
-		}
-		return res;
-	}
-
-	private Boolean existImpicationContraint() {
-		Boolean res = false;
-		int index = 0;
-
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof ImplicationConstraint) {
-				res = true;
-			} else {
-				res = existImplicationContraint(temporalConstraintList.get(index));
-			}
-			index++;
-		}
-		return res;
-	}
-
-	private Boolean existImplicationContraint(Constraint cons) {
-		Boolean res = false;
-
-		if (cons instanceof ParenthesisConstraint) {
-			res = existImplicationContraint(((ParenthesisConstraint) cons).getContent());
-		} else if (cons instanceof LiteralConstraint) {
-			res = false;
-		} else if (cons instanceof NotConstraint) {
-			res = existImplicationContraint(((NotConstraint) cons).getContent());
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			res = existImplicationContraint(andCons.getLeft()) || existImplicationContraint(andCons.getRight());
-		} else if (cons instanceof EquivalenceConstraint) {
-			EquivalenceConstraint equilCons = (EquivalenceConstraint) cons;
-			res = existImplicationContraint(equilCons.getLeft()) || existImplicationContraint(equilCons.getRight());
-		} else if (cons instanceof ImplicationConstraint) {
-			res = true;
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint andCons = (OrConstraint) cons;
-			res = existImplicationContraint(andCons.getLeft()) || existImplicationContraint(andCons.getRight());
-		}
-		return res;
-	}
-
-	private void removeImplicationConstraint(Constraint cons) {
-		if (cons instanceof NotConstraint) {
-			NotConstraint notCons = (NotConstraint) cons;
-			if (notCons.getContent() instanceof ImplicationConstraint) {
-				ImplicationConstraint implCons = (ImplicationConstraint) notCons.getContent();
-				NotConstraint intNotCons = new NotConstraint(implCons.getLeft());
-				OrConstraint orCons = new OrConstraint(intNotCons, implCons.getRight());
-				notCons.replaceConstraintSubPart(notCons.getContent(), orCons);
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof ImplicationConstraint) {
-				ImplicationConstraint implCons = (ImplicationConstraint) andCons.getLeft();
-				NotConstraint intNotCons = new NotConstraint(implCons.getLeft());
-				OrConstraint orCons = new OrConstraint(intNotCons, implCons.getRight());
-				andCons.replaceConstraintSubPart(andCons.getLeft(), orCons);
-			} else {
-				removeImplicationConstraint(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof ImplicationConstraint) {
-				ImplicationConstraint implCons = (ImplicationConstraint) andCons.getRight();
-				NotConstraint intNotCons = new NotConstraint(implCons.getLeft());
-				OrConstraint orCons = new OrConstraint(intNotCons, implCons.getRight());
-				andCons.replaceConstraintSubPart(andCons.getRight(), orCons);
-			} else {
-				removeImplicationConstraint(andCons.getRight());
-			}
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof ImplicationConstraint) {
-				ImplicationConstraint implCons = (ImplicationConstraint) orCons.getLeft();
-				NotConstraint intNotCons = new NotConstraint(implCons.getLeft());
-				OrConstraint intOrCons = new OrConstraint(intNotCons, implCons.getRight());
-				orCons.replaceConstraintSubPart(orCons.getLeft(), intOrCons);
-			} else {
-				removeImplicationConstraint(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof ImplicationConstraint) {
-				ImplicationConstraint implCons = (ImplicationConstraint) orCons.getRight();
-				NotConstraint intNotCons = new NotConstraint(implCons.getLeft());
-				OrConstraint intOrCons = new OrConstraint(intNotCons, implCons.getRight());
-				orCons.replaceConstraintSubPart(orCons.getRight(), intOrCons);
-			} else {
-				removeImplicationConstraint(orCons.getRight());
-			}
-		}
-	}
-
-	private void removeImplicationConstraint() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof ImplicationConstraint) {
-				// se tranforma la estructura
-				ImplicationConstraint implCons = (ImplicationConstraint) temporalConstraintList.get(i);
-				NotConstraint notCons = new NotConstraint(implCons.getLeft());
-				OrConstraint orCons = new OrConstraint(notCons, implCons.getRight());
-				temporalConstraintList.set(i, orCons);
-			} else if (existImplicationContraint(temporalConstraintList.get(i))) {
-				removeImplicationConstraint(temporalConstraintList.get(i));
-			}
-		}
-	}
-
-	private void removeEquivalenceConstraint() {
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof EquivalenceConstraint) {
-				// se tranforma la estructura
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) temporalConstraintList.get(i);
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				// AndConstraint andConstraint = new AndConstraint(leftImplication,
-				// rightImplication);
-				temporalConstraintList.set(i, leftImplication);
-				temporalConstraintList.add(rightImplication);
-			} else if (existEquivalenceConstraint(temporalConstraintList.get(i))) {
-				removeEquivalenceConstraint(temporalConstraintList.get(i));
-			}
-		}
-	}
-
-	private void removeEquivalenceConstraint(Constraint cons) {
-		if (cons instanceof NotConstraint) {
-			NotConstraint notCons = (NotConstraint) cons;
-			if (notCons.getContent() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = ((EquivalenceConstraint) notCons.getContent());
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				notCons.replaceConstraintSubPart(notCons.getContent(), andConstraint);
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) andCons.getLeft();
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				andCons.replaceConstraintSubPart(andCons.getLeft(), andConstraint);
-			} else {
-				removeEquivalenceConstraint(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) andCons.getRight();
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				andCons.replaceConstraintSubPart(andCons.getRight(), andConstraint);
-			} else {
-				removeEquivalenceConstraint(andCons.getRight());
-			}
-		} else if (cons instanceof ImplicationConstraint) {
-			ImplicationConstraint impCons = (ImplicationConstraint) cons;
-			if (impCons.getLeft() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) impCons.getLeft();
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				impCons.replaceConstraintSubPart(impCons.getLeft(), andConstraint);
-			} else {
-				removeEquivalenceConstraint(impCons.getLeft());
-			}
-			if (impCons.getRight() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) impCons.getRight();
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				impCons.replaceConstraintSubPart(impCons.getRight(), andConstraint);
-			} else {
-				removeEquivalenceConstraint(impCons.getRight());
-			}
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) orCons.getLeft();
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				orCons.replaceConstraintSubPart(orCons.getLeft(), andConstraint);
-			} else {
-				removeEquivalenceConstraint(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof EquivalenceConstraint) {
-				EquivalenceConstraint equilCons = (EquivalenceConstraint) orCons.getRight();
-				ImplicationConstraint leftImplication = new ImplicationConstraint(equilCons.getLeft(),
-						equilCons.getRight());
-				ImplicationConstraint rightImplication = new ImplicationConstraint(equilCons.getRight(),
-						equilCons.getLeft());
-				AndConstraint andConstraint = new AndConstraint(leftImplication, rightImplication);
-				orCons.replaceConstraintSubPart(orCons.getRight(), andConstraint);
-			} else {
-				removeEquivalenceConstraint(orCons.getRight());
-			}
-		}
-	}
-
-	private Boolean existEquivalenceConstraint() {
-		Boolean res = false;
-		int index = 0;
-
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof EquivalenceConstraint) {
-				res = true;
-			} else {
-				res = existEquivalenceConstraint(temporalConstraintList.get(index));
-			}
-			index++;
-		}
-		return res;
-	}
-
-	private Boolean existEquivalenceConstraint(Constraint cons) {
-		Boolean res = false;
-		if (cons instanceof ParenthesisConstraint) {
-			res = existEquivalenceConstraint(((ParenthesisConstraint) cons).getContent());
-		} else if (cons instanceof LiteralConstraint) {
-			res = false;
-		} else if (cons instanceof NotConstraint) {
-			res = existEquivalenceConstraint(((NotConstraint) cons).getContent());
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			res = existEquivalenceConstraint(andCons.getLeft()) || existEquivalenceConstraint(andCons.getRight());
-		} else if (cons instanceof EquivalenceConstraint) {
-
-			res = true;
-		} else if (cons instanceof ImplicationConstraint) {
-			ImplicationConstraint andCons = (ImplicationConstraint) cons;
-			res = existEquivalenceConstraint(andCons.getLeft()) || existEquivalenceConstraint(andCons.getRight());
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint andCons = (OrConstraint) cons;
-			res = existEquivalenceConstraint(andCons.getLeft()) || existEquivalenceConstraint(andCons.getRight());
-		}
-		return res;
-
-	}
-
-	private Boolean existParenthesis(Constraint cons) {
-		Boolean res = false;
-
-		if (cons instanceof ParenthesisConstraint) {
-			res = true;
-		} else if (cons instanceof LiteralConstraint) {
-			res = false;
-		} else if (cons instanceof NotConstraint) {
-			res = existParenthesis(((NotConstraint) cons).getContent());
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			res = existParenthesis(andCons.getLeft()) || existParenthesis(andCons.getRight());
-		} else if (cons instanceof EquivalenceConstraint) {
-			EquivalenceConstraint andCons = (EquivalenceConstraint) cons;
-			res = existParenthesis(andCons.getLeft()) || existParenthesis(andCons.getRight());
-		} else if (cons instanceof ImplicationConstraint) {
-			ImplicationConstraint andCons = (ImplicationConstraint) cons;
-			res = existParenthesis(andCons.getLeft()) || existParenthesis(andCons.getRight());
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint andCons = (OrConstraint) cons;
-			res = existParenthesis(andCons.getLeft()) || existParenthesis(andCons.getRight());
-		}
-		return res;
-	}
-
-	private Boolean existParenthesis() {
-		Boolean res = false;
-		int index = 0;
-		while (!res && index < temporalConstraintList.size()) {
-			if (temporalConstraintList.get(index) instanceof ParenthesisConstraint) {
-				res = true;
-			} else {
-				res = existParenthesis(temporalConstraintList.get(index));
-			}
-			index++;
-		}
-		return res;
-	}
-
-	private void removeParenthesis(Constraint cons) {
-
-		if (cons instanceof NotConstraint) {
-			NotConstraint notCons = (NotConstraint) cons;
-			if (notCons.getContent() instanceof ParenthesisConstraint) {
-				Constraint content = ((ParenthesisConstraint) notCons.getContent()).getContent();
-				notCons.replaceConstraintSubPart(notCons.getContent(), content);
-			}
-		} else if (cons instanceof AndConstraint) {
-			AndConstraint andCons = (AndConstraint) cons;
-			if (andCons.getLeft() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) andCons.getLeft()).getContent();
-				andCons.replaceConstraintSubPart(andCons.getLeft(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(andCons.getLeft());
-			}
-			if (andCons.getRight() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) andCons.getRight()).getContent();
-				andCons.replaceConstraintSubPart(andCons.getRight(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(andCons.getRight());
-			}
-		} else if (cons instanceof EquivalenceConstraint) {
-			EquivalenceConstraint equiCons = (EquivalenceConstraint) cons;
-			if (equiCons.getLeft() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) equiCons.getLeft()).getContent();
-				equiCons.replaceConstraintSubPart(equiCons.getLeft(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(equiCons.getLeft());
-			}
-			if (equiCons.getRight() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) equiCons.getRight()).getContent();
-				equiCons.replaceConstraintSubPart(equiCons.getRight(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(equiCons.getRight());
-			}
-		} else if (cons instanceof ImplicationConstraint) {
-			ImplicationConstraint impCons = (ImplicationConstraint) cons;
-			if (impCons.getLeft() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) impCons.getLeft()).getContent();
-				impCons.replaceConstraintSubPart(impCons.getLeft(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(impCons.getLeft());
-			}
-			if (impCons.getRight() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) impCons.getRight()).getContent();
-				impCons.replaceConstraintSubPart(impCons.getRight(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(impCons.getRight());
-			}
-		} else if (cons instanceof OrConstraint) {
-			OrConstraint orCons = (OrConstraint) cons;
-			if (orCons.getLeft() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) orCons.getLeft()).getContent();
-				orCons.replaceConstraintSubPart(orCons.getLeft(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(orCons.getLeft());
-			}
-			if (orCons.getRight() instanceof ParenthesisConstraint) {
-				Random rand = new Random();
-				String literal = "Fake_Literal" + rand.nextInt();
-				int index = problem.getIndex(literal);
-				problem.addBoundingConstraint(index, 0, 1);
-				LiteralConstraint litCons = new LiteralConstraint(literal);
-				// se reemplaza el lado izquierdo por el nuevo literal
-				Constraint aux = ((ParenthesisConstraint) orCons.getRight()).getContent();
-				orCons.replaceConstraintSubPart(orCons.getRight(), litCons);
-				EquivalenceConstraint equilCons = new EquivalenceConstraint(litCons, aux);
-				temporalConstraintList.add(equilCons);
-			} else {
-				removeParenthesis(orCons.getRight());
-			}
-		}
-
-	}
-
-	private void removeParenthesis() {
-
-		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (existParenthesis(temporalConstraintList.get(i))) {
-				removeParenthesis(temporalConstraintList.get(i));
-			} else if (temporalConstraintList.get(i) instanceof ParenthesisConstraint) {
-				temporalConstraintList.set(i, ((ParenthesisConstraint) temporalConstraintList.get(i)).getContent());
-			}
-		}
-	}
 
 	// Si es una fake constraint, no tiene feature asociada
 	// Las fake constraint son generadas cuando hacemos cut-off de árboles.
@@ -1603,177 +663,6 @@ public class UVLTranslator {
 		 * right = new OrConstraint(reduceNotConstraint(a), reduceNotConstraint(b)); res
 		 * = new AndConstraint(left, right);
 		 **/
-	}
-
-	private Boolean hasNumberExpression(ExpressionConstraint cons) {
-		return (cons.getLeft() instanceof NumberExpression) || (cons.getRight() instanceof NumberExpression);
-	}
-
-	private void transformExpressionConstraintWithoutNumbers(ExpressionConstraint cons) {
-		LiteralExpression aux;
-		List<Term> termList = new LinkedList<Term>();
-		if (cons instanceof EqualEquationConstraint) {
-			aux = (LiteralExpression) cons.getLeft();
-			Integer index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, 0, Comparator.Equal));
-		} else if (cons instanceof GreaterEqualsEquationConstraint) {
-			// -a+b<=0
-			aux = (LiteralExpression) cons.getLeft();
-			Integer index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, 0, Comparator.LowerOrEqual));
-		} else if (cons instanceof GreaterEquationConstraint) {
-			aux = (LiteralExpression) cons.getLeft();
-			Integer index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, -1, Comparator.LowerOrEqual));
-		} else if (cons instanceof LowerEqualsEquationConstraint) {
-			aux = (LiteralExpression) cons.getLeft();
-			Integer index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, 0, Comparator.LowerOrEqual));
-		} else if (cons instanceof LowerEquationConstraint) {
-			// a-b<=-1
-			aux = (LiteralExpression) cons.getLeft();
-			Integer index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, -1, Comparator.LowerOrEqual));
-		} else {// NotEqualsEquationConstraint
-				// we generate two constraints to model the scenario in which literals cannot be
-				// equals
-				// -a+b<=-1
-			aux = (LiteralExpression) cons.getLeft();
-			Integer index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, -1, Comparator.LowerOrEqual));
-			// a-b<=-1
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(1d, index));
-			aux = (LiteralExpression) cons.getLeft();
-			index = problem.getIndex(aux.getFeature());
-			termList.add(new Term(-1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, -1, Comparator.LowerOrEqual));
-		}
-	}
-
-	private void transformExpressionConstraintWithNumbers(ExpressionConstraint cons) {
-		LiteralExpression literal;
-		NumberExpression number;
-		LinearConstraint toPrint = null;
-		List<Term> termList = new LinkedList<Term>();
-		if (cons.getLeft() instanceof NumberExpression) {
-			literal = (LiteralExpression) cons.getRight();
-			number = (NumberExpression) cons.getLeft();
-		} else {
-			literal = (LiteralExpression) cons.getLeft();
-			number = (NumberExpression) cons.getRight();
-		}
-		int constant = (int) number.getNumber();
-		Integer index = problem.getIndex(literal.getFeature());
-		if (cons instanceof EqualEquationConstraint) {
-			termList.add(new Term(1d, index));
-			problem.addEqualityConstraint(new LinearConstraint(termList, constant, Comparator.Equal));
-			toPrint = new LinearConstraint(termList, constant, Comparator.Equal);
-			System.out.println(toPrint);
-		} else if (cons instanceof GreaterEqualsEquationConstraint) {
-			// 3>=X
-			if (cons.getLeft() instanceof NumberExpression) {
-				termList.add(new Term(-1d, index));
-				constant = constant * (-1);
-				// x>=3
-			} else {
-				termList.add(new Term(1d, index));
-
-			}
-			problem.addEqualityConstraint(new LinearConstraint(termList, constant, Comparator.LowerOrEqual));
-			toPrint = new LinearConstraint(termList, constant, Comparator.LowerOrEqual);
-			System.out.println(toPrint);
-		} else if (cons instanceof GreaterEquationConstraint) {
-			// X>3
-			if (cons.getLeft() instanceof LiteralExpression) {
-				termList.add(new Term(-1d, index));
-				constant = constant * (-1);// -X<-3
-				constant--;
-				// 3>X
-			} else {
-				// -a<=-(number+1)
-				termList.add(new Term(1d, index));
-				constant--;
-			}
-			problem.addEqualityConstraint(new LinearConstraint(termList, constant, Comparator.LowerOrEqual));
-			toPrint = new LinearConstraint(termList, constant, Comparator.LowerOrEqual);
-			System.out.println(toPrint);
-		} else if (cons instanceof LowerEqualsEquationConstraint) {
-			// 3<=X
-			if (cons.getLeft() instanceof NumberExpression) {
-				termList.add(new Term(-1d, index));
-				constant = constant * (-1);
-				// x>=3
-			} else {
-				termList.add(new Term(1d, index));
-			}
-			problem.addEqualityConstraint(new LinearConstraint(termList, constant, Comparator.LowerOrEqual));
-			toPrint = new LinearConstraint(termList, constant, Comparator.LowerOrEqual);
-			System.out.println(toPrint);
-		} else if (cons instanceof LowerEquationConstraint) {
-			// X<3
-			if (cons.getRight() instanceof NumberExpression) {
-				// -a<=-(number+1)
-				termList.add(new Term(1d, index));
-				constant--;
-				// 3<X
-			} else {
-				termList.add(new Term(-1d, index));
-				constant = (-1) * constant;// -3>-X
-				constant--;
-
-			}
-			problem.addEqualityConstraint(new LinearConstraint(termList, constant, Comparator.LowerOrEqual));
-			toPrint = new LinearConstraint(termList, constant, Comparator.LowerOrEqual);
-			System.out.println(toPrint);
-		} else {// NotEqualsEquationConstraint
-			// -a<=-(num+1)
-			termList.add(new Term(-1d, index));
-			problem.addConstraint(new LinearConstraint(termList, (-1) * (constant + 1), Comparator.LowerOrEqual));
-			toPrint = new LinearConstraint(termList, (-1) * (constant + 1), Comparator.LowerOrEqual);
-			System.out.print(toPrint + " y ");
-			termList = new LinkedList<Term>();
-			termList.add(new Term(1d, index));
-			problem.addConstraint(new LinearConstraint(termList, constant - 1, Comparator.LowerOrEqual));
-			toPrint = new LinearConstraint(termList, constant - 1, Comparator.LowerOrEqual);
-			System.out.println(toPrint);
-		}
-	}
-
-	// we assume that these expression are composed only of LiteralExpression
-	// elements
-	private void transformExpressionConstraint(ExpressionConstraint cons) {
-
-		if (!hasNumberExpression(cons)) {
-			transformExpressionConstraintWithoutNumbers(cons);
-		} else {
-			transformExpressionConstraintWithNumbers(cons);
-		}
 	}
 
 	private void transformImplicationConstraint(ImplicationConstraint cons) {
@@ -2259,7 +1148,7 @@ public class UVLTranslator {
 	}
 
 	private void addBoundingConstraints(Integer featureIndex, Feature feature) {
-		int upperBound = 1, lowerBound = 0;
+		/*int upperBound = 1, lowerBound = 0;
 
 		// se obtienen los boundings
 		if (feature.getUpperBound() != null && feature.getLowerBound() != null) {
@@ -2281,10 +1170,19 @@ public class UVLTranslator {
 		if (lowerBound != 0) {
 			upperBound = upperBound - lowerBound + 1;
 		}
-		problem.addBoundingConstraint(featureIndex, 0, upperBound);
+		problem.addBoundingConstraint(featureIndex, 0, upperBound);*/
+		for(int i=0;i<temporalConstraintList.size();i++) {
+			if(isBoundingConstraint(temporalConstraintList.get(i))) {
+				Integer consIndex=getVariableIndex((AndConstraint)temporalConstraintList.get(i));
+				if(consIndex.equals(featureIndex)) {
+					processBoundingConstraint((AndConstraint)temporalConstraintList.get(i));
+				}
+			}
+		}
+		
 	}
 
-	private Double getUpperBoundConstraintNumber(Feature feature, Constraint cons) {
+	/*private Double getUpperBoundConstraintNumber(Feature feature, Constraint cons) {
 		Double res = 1d;
 		Expression left, right;
 		if (cons instanceof GreaterEqualsEquationConstraint) {
@@ -2439,7 +1337,7 @@ public class UVLTranslator {
 			}
 		}
 		return res;
-	}
+	}*/
 
 	public void getFeatures(Feature feature, List<Feature> featureList) {
 		for (Group group : feature.getChildren()) {
@@ -2517,112 +1415,6 @@ public class UVLTranslator {
 		return res;
 	}
 
-	private void writeFile(PrintWriter printer, HashMap<Integer, Integer> resList,
-			HashMap<Feature, HashMap<Integer, HashMap<String, Integer>>> clonConf) {
-		List<Feature> regClonableList = new LinkedList<Feature>();
-		HashMap<Integer, HashMap<String, Integer>> subTreeConf;
-		HashMap<String, Integer> branchConf;
-		Integer[] resListKey = resList.keySet().toArray(new Integer[resList.size()]);
-
-		for (int j = 0; j < resListKey.length; j++) {
-			Object var = problem.getNameFromID(resListKey[j]);
-			if (var instanceof Feature) {
-
-				Feature feature = ((Feature) var);
-				if (!isClon(feature)) {
-					String featureName = ((Feature) var).getFeatureName();
-					if (isNumerical(feature)) {
-						List<Feature> childrenFeatures = getChildrenList((Feature) var);
-
-						printer.println("\t\t\"" + featureName + "\": [");
-
-						// for para cada item dentro del feature cardinality
-						for (int k = 0; k < childrenFeatures.size(); k++) {
-							printer.println("\t\t\t{");
-							// tengo duda de si aunque este en un group cardinality, en el res viene la
-							// configuracion de su hijo en forma consecutiva
-							// es decir, si puedo seguir leyendo los valores de j y por tanto es correcto
-							// meterle el j++
-							printer.println(
-									"\t\t\t\t\"" + featureName + "\": " + resList.get(problem.getVariables().get(j)));
-							// si es el último valor no añada la coma al final
-							if (k == childrenFeatures.size() - 1) {
-								printer.print("\t\t\t}");
-							} else {
-								printer.print("\t\t\t},");
-							}
-							j++;
-						}
-						printer.println("\t\t],");
-					} else {
-						Integer iValue = resList.get(resListKey[j]);
-						String sValue;
-
-						if (iValue == 0) {
-							sValue = "false";
-						} else {
-							sValue = "true";
-						}
-
-						if (j == resListKey.length - 1) {
-							printer.println("\t\t\"" + featureName + "\": " + sValue);
-						} else {
-							printer.println("\t\t\"" + featureName + "\": " + sValue + ",");
-						}
-					}
-				} else {
-					Feature oriFea = clonAndClonableRegistry.get(feature);
-					if (isClonable(oriFea)) {
-						// ¿se ha registrado el subarbol asociado a la clonable en la configuración?
-						if (!regClonableList.contains(oriFea)) {
-							// contador de características que vamos a añadir
-							int feaCounter = 0;
-							// la añadimos al registro de añadidas.
-							regClonableList.add(oriFea);
-							// añadimos el subarbol al fichero de resultado.
-							printer.println("\t\t\"" + oriFea.getFeatureName() + "\": [");
-							// recuperamos el subarbol
-
-							subTreeConf = clonConf.get(oriFea);
-							// recuperamos las claves
-							Integer[] branchKeyArray = subTreeConf.keySet().toArray(new Integer[subTreeConf.size()]);
-							for (int a = 0; a < branchKeyArray.length; a++) {
-								Integer bId = branchKeyArray[a];
-								branchConf = subTreeConf.get(bId);
-								String[] feaIter = branchConf.keySet().toArray(new String[branchConf.size()]);
-								printer.println("\t\t\t{");
-								// no está preparado para numéricas.
-								for (int b = 0; b < feaIter.length; b++) {
-									String feaName = feaIter[b];
-									Integer value = branchConf.get(feaName);
-									String conVal = (value == 1 ? "true" : "false");
-									String term = (b == feaIter.length - 1 ? "\": " + conVal : "\": " + conVal + ",");
-									printer.println("\t\t\t\t\"" + feaName + term);
-									feaCounter++;
-								}
-								// para el último elemento no va una coma.
-								if (a != branchKeyArray.length - 1) {
-									printer.println("\t\t\t},");
-								} else {
-									printer.println("\t\t\t}");
-								}
-							}
-							// en la última línea no va una coma
-							if (j == resListKey.length - 1) {
-								printer.println("\t\t]");
-							} else {
-								printer.println("\t\t],");
-							}
-						}
-					}
-				}
-			}
-		}
-		// cierre del fichero
-		printer.println("\t}");
-		printer.println("}");
-	}
-
 	private HashMap<Feature, Double> getConfiguration(String resFile) throws IOException {
 		HashMap<Feature, Double> res = new HashMap<Feature, Double>();
 		BufferedReader br = new BufferedReader(new FileReader(resFile));
@@ -2666,13 +1458,13 @@ public class UVLTranslator {
 	}
 
 	private Feature getFeatureFromString(String name, HashMap<Feature, Double> resConf) {
-		//String original=name;
-		//System.out.println("Se llama a getFeatureFromString con "+name);
+		// String original=name;
+		// System.out.println("Se llama a getFeatureFromString con "+name);
 		name = name.trim();
 		String regex = "\"|(?i)\\b(cardinality|integer)\\b|\\[\\s*[^\\[\\]]+?\\s*\\]";
 		name = name.replaceAll(regex, "");
 		name = name.trim().replaceAll("\\s*\\{.*?\\}\\s*$", "");
-		//System.out.println("Tras transformar: "+name);
+		// System.out.println("Tras transformar: "+name);
 		Feature res = null;
 		Iterator<Feature> featureIter = resConf.keySet().iterator();
 		Feature aux;
@@ -2685,17 +1477,17 @@ public class UVLTranslator {
 			}
 		}
 		// si la característica no está en la configuración es una clonable.
-		if(!end) {
-			Iterator<Feature> iter=clonableAndClonListRegistry.keySet().iterator();
-			while(iter.hasNext() && !end) {
-				aux=iter.next();
-				if(aux.getFeatureName().equals(name)) {
-					end=true;
-					res=aux;
+		if (!end) {
+			Iterator<Feature> iter = clonableAndClonListRegistry.keySet().iterator();
+			while (iter.hasNext() && !end) {
+				aux = iter.next();
+				if (aux.getFeatureName().equals(name)) {
+					end = true;
+					res = aux;
 				}
 			}
 		}
-		//System.out.println("Se asigna a "+res.getFeatureName());
+		// System.out.println("Se asigna a "+res.getFeatureName());
 		return res;
 	}
 
@@ -2726,7 +1518,8 @@ public class UVLTranslator {
 	private String composeJSONEntry(String line, HashMap<Feature, Double> resConf) {
 		String res = "";
 		Feature fea = getFeatureFromString(line, resConf);
-		if(fea==null)System.out.println(line);
+		if (fea == null)
+			System.out.println(line);
 		if (isClon(fea))
 			fea = clonAndClonableRegistry.get(fea);
 		String featureName;
@@ -2742,12 +1535,13 @@ public class UVLTranslator {
 			List<Feature> children = getChildrenList(fea);
 			for (int i = 1; i <= clonList.size(); i++) {
 				res = res + "      {\n";
-				
+
 				String childClonName = fea.getFeatureName() + "_" + i;
 				Feature clon = getFeatureFromString(childClonName, resConf);
-				if(clon==null)System.out.println(childClonName);
+				if (clon == null)
+					System.out.println(childClonName);
 				Double value = resConf.get(clon);
-				
+
 				res = res + "        " + featureName + ":"
 						+ (isNumerical(fea) ? value.toString() : (value == 0 ? "false,\n" : "true,\n"));
 				for (Feature child : children) {
@@ -2806,7 +1600,7 @@ public class UVLTranslator {
 
 				if (!ignoreList.contains(line.trim())) {
 					// line contiene una línea del fichero uvl
-					
+
 					String newPart = composeJSONEntry(line, resConf);
 					if (!newPart.equals(""))
 						toBePrinted = toBePrinted + spaces + newPart + ",\n";
@@ -2827,53 +1621,6 @@ public class UVLTranslator {
 			e.printStackTrace();
 		}
 	}
-
-	/*
-	 * public void writeConfigurationToFile(String resFile, String conFile, String
-	 * featureModelName) {
-	 * 
-	 * try { HashMap<Feature, HashMap<Integer, HashMap<String, Integer>>> clonConf =
-	 * new HashMap<Feature, HashMap<Integer, HashMap<String, Integer>>>();
-	 * HashMap<Integer, HashMap<String, Integer>> subTreeConf; HashMap<String,
-	 * Integer> branchConf; PrintWriter printer = new PrintWriter(conFile);
-	 * BufferedReader br = new BufferedReader(new FileReader(resFile)); String texto
-	 * = br.readLine(); // cada posición de la lista resList se corresponde al valor
-	 * de la variable // guardada en esa posición. HashMap<Integer, Integer> resList
-	 * = new HashMap<Integer, Integer>();// <Index,Value> int index = 0; while
-	 * (texto != null && index < problem.getVariables().size()) { if
-	 * (texto.startsWith("-")) { texto = texto.substring(1); } Double number =
-	 * Double.parseDouble(texto); Integer id = problem.getVariables().get(index);
-	 * Object obj = problem.getNameFromID(id); if (obj instanceof Feature) { if
-	 * (isClon((Feature) obj)) { // 1. ¿De quién eres un clon? Feature oriFea =
-	 * clonAndClonableRegistry.get((Feature) obj); // 2. ¿Es tu original una
-	 * clonable? // si if (isClonable(oriFea)) { // ¿Está registrado en el modelo?
-	 * if (clonConf.containsKey(oriFea)) { subTreeConf = clonConf.get(oriFea); }
-	 * else { clonConf.put(oriFea, new HashMap<Integer, HashMap<String,
-	 * Integer>>()); subTreeConf = clonConf.get(oriFea); } // no } else { // ¿Cuál
-	 * es su ancestro clonable?
-	 * 
-	 * Feature anc = getClonableAncestor(oriFea); // ¿Está registrado en el modelo?
-	 * if (clonConf.containsKey(anc)) { subTreeConf = clonConf.get(anc); } else {
-	 * clonConf.put(anc, new HashMap<Integer, HashMap<String, Integer>>());
-	 * subTreeConf = clonConf.get(anc); } } // ¿Está registrada esa rama? Integer
-	 * branchId = getBranchId((Feature) obj); if (subTreeConf.containsKey(branchId))
-	 * { branchConf = subTreeConf.get(branchId); } else { branchConf = new
-	 * HashMap<String, Integer>(); subTreeConf.put(branchId, branchConf); } //
-	 * Añadimos ese valor en la rama branchConf.put(oriFea.getFeatureName(),
-	 * number.intValue()); } resList.put(id, number.intValue());// se asigna a cada
-	 * característica su // valor. } //
-	 * System.out.println(variables.get(i)+":"+texto); texto = br.readLine();
-	 * index++; }
-	 * 
-	 * // visualización de los resultados. // cabecera de fichero
-	 * printer.println("{"); printer.println("\t\"file\": " + "\"" +
-	 * featureModelName + "\","); printer.println("\t\"config\": {");
-	 * writeFile(printer, resList, clonConf); br.close(); printer.close(); } catch
-	 * (FileNotFoundException e) { e.printStackTrace(); } catch (IOException e) {
-	 * e.printStackTrace(); }
-	 * 
-	 * }
-	 */
 
 	/***
 	 * Se añaden todos los descendientes de un clon al problema
