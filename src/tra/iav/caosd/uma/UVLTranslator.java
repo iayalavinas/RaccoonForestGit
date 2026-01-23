@@ -142,11 +142,13 @@ public class UVLTranslator {
 				}
 			} else if (!isClonable(featureList.get(i)) && !hasClonableAncestor(featureList.get(i))) {
 				index = problem.getIndex(featureList.get(i));
-				// es numerica
-				if (isNumerical(featureList.get(i))) {
-					addBoundingConstraints(index, featureList.get(i));
-				} else {
-					problem.addBoundingConstraint(index, 0, 1);
+				if (!problem.isBounded(index)) {
+					// es numerica
+					if (isNumerical(featureList.get(i))) {
+						addBoundingConstraints(index, featureList.get(i));
+					} else {
+						problem.addBoundingConstraint(index, 0, 1);
+					}
 				}
 				// paternity
 				addIndependentChildren(featureList.get(i), index);
@@ -319,7 +321,7 @@ public class UVLTranslator {
 		Integer upperBound=bound.getMax();
 		getBounding(cons.getLeft(), bound);
 		getBounding(cons.getRight(),bound);
-		System.out.println(variableIndex+" "+bound.toString());
+		//System.out.println(variableIndex+" "+bound.toString());
 		originalBounding.put(variableIndex, bound);
 		if (bound.getMin() != 0) {
 			upperBound = upperBound - bound.getMin() + 1;
@@ -1148,29 +1150,6 @@ public class UVLTranslator {
 	}
 
 	private void addBoundingConstraints(Integer featureIndex, Feature feature) {
-		/*int upperBound = 1, lowerBound = 0;
-
-		// se obtienen los boundings
-		if (feature.getUpperBound() != null && feature.getLowerBound() != null) {
-
-			upperBound = Integer.parseInt(feature.getUpperBound());
-			lowerBound = Integer.parseInt(feature.getLowerBound());
-		} else {
-			List<Constraint> auxConstList = new LinkedList<Constraint>();
-			auxConstList.addAll(model.getConstraints());
-			for (int i = 0; i < auxConstList.size(); i++) {
-				if (isLowerBoundConstraint(feature, auxConstList.get(i))) {
-					lowerBound = getLowerBoundConstraintNumber(feature, auxConstList.get(i)).intValue();
-				}
-				if (isUpperBoundConstraint(feature, auxConstList.get(i))) {
-					upperBound = getUpperBoundConstraintNumber(feature, auxConstList.get(i)).intValue();
-				}
-			}
-		}
-		if (lowerBound != 0) {
-			upperBound = upperBound - lowerBound + 1;
-		}
-		problem.addBoundingConstraint(featureIndex, 0, upperBound);*/
 		for(int i=0;i<temporalConstraintList.size();i++) {
 			if(isBoundingConstraint(temporalConstraintList.get(i))) {
 				Integer consIndex=getVariableIndex((AndConstraint)temporalConstraintList.get(i));
@@ -1507,10 +1486,21 @@ public class UVLTranslator {
 				childName = "\"" + child.getFeatureName() + "\"";
 			}
 			res = res + "        " + childName + ":"
-					+ (isNumerical(child) ? value.toString() : (value == 0 ? "false,\n" : "true,\n"));
+					+ (isNumerical(child) ? getNotNormalizedValue(child,value) : (value == 0 ? "false,\n" : "true,\n"));
 			if (getChildrenList(childClon).size() > 0) {
 				composeJSONEntryClonChild(childClon, resConf);
 			}
+		}
+		return res;
+	}
+	
+	private String getNotNormalizedValue(Feature fea,Double value) {
+		String res=value.toString();
+		Integer index=problem.getIndex(fea);
+		if(originalBounding.containsKey(index)) {
+			Bounding bound=originalBounding.get(index);
+			Double newValue=bound.getMin()+value;
+			res=newValue.toString();
 		}
 		return res;
 	}
@@ -1543,7 +1533,7 @@ public class UVLTranslator {
 				Double value = resConf.get(clon);
 
 				res = res + "        " + featureName + ":"
-						+ (isNumerical(fea) ? value.toString() : (value == 0 ? "false,\n" : "true,\n"));
+						+ (isNumerical(fea) ? getNotNormalizedValue(fea, value) : (value == 0 ? "false,\n" : "true,\n"));
 				for (Feature child : children) {
 					childClonName = child.getFeatureName() + "_" + i;
 					clon = getFeatureFromString(childClonName, resConf);
@@ -1555,7 +1545,7 @@ public class UVLTranslator {
 						childName = "\"" + child.getFeatureName() + "\"";
 					}
 					res = res + "        " + childName + ":"
-							+ (isNumerical(fea) ? value.toString() : (value == 0 ? "false,\n" : "true,\n"));
+							+ (isNumerical(child) ? getNotNormalizedValue(child, value) : (value == 0 ? "false,\n" : "true,\n"));
 					// se añaden los descendientes de child
 					if (getChildrenList(clon).size() > 0) {
 						res = res + composeJSONEntryClonChild(clon, resConf);
@@ -1570,7 +1560,7 @@ public class UVLTranslator {
 			res = "";
 		} else {
 			Double value = resConf.get(fea);
-			res = featureName + ":" + (isNumerical(fea) ? value.toString() : (value == 0 ? "false" : "true"));
+			res = featureName + ":" + (isNumerical(fea) ? getNotNormalizedValue(fea, value) : (value == 0 ? "false" : "true"));
 		}
 		return res;
 	}

@@ -491,7 +491,6 @@ public class IStarModelTranslator {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return res;
@@ -529,7 +528,7 @@ public class IStarModelTranslator {
 			// lo primero que lee esta función es siempre un identificador
 			if (!lastLine.contains("\"display\": {},")) {
 				while (!prevLine.equals("}") || !line.contains("},")) {
-					System.out.println(line);
+					//System.out.println(line);
 					if (line.contains("}")) {
 						if (prevLine.contains("\"y\":")) {
 							printer.println(line);
@@ -584,7 +583,6 @@ public class IStarModelTranslator {
 			line = reader.readLine();
 			printer.println(line);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

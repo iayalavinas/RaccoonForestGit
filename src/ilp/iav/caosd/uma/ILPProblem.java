@@ -138,12 +138,12 @@ public class ILPProblem {
 	public void addBoundingConstraint(int index, int lower, int upper) {
 		// System.out.println("2: Se añade el bounding " + lower + " y " + upper + "
 		// para" + index);
-		if (lower == 0) {
+		//if (lower == 0) {
 			boundingConstraints.put(index, new Bounding(lower, upper));
-		} else {
+		/*} else {
 			Integer upperBound = upper - lower + 1;
 			boundingConstraints.put(index, new Bounding(0, upperBound));
-		}
+		}*/
 	}
 
 	public void generateIntLinProg(String fileName) {
