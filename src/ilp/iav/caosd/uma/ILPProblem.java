@@ -230,10 +230,24 @@ public class ILPProblem {
 	}
 
 	private void printBoundings(PrintWriter pw) {
-		pw.println("lb = zeros(" + variables.size() + ",1);");
+		// se imprimen los lower bounds
+		//pw.println("lb = zeros(" + variables.size() + ",1);");
+		Bounding bounding;
+		String lowerBoundString="lb = [";
+		for(int i=0;i<variables.size();i++) {
+			bounding=boundingConstraints.get(variables.get(i));
+			if (bounding == null) {
+				System.out.println("Null bounding for variable " + mIDToName.get(variables.get(i)));
+			}
+			int lowerBound=bounding.getMin();
+			lowerBoundString=lowerBoundString+lowerBound+";";
+		}
+		lowerBoundString=lowerBoundString.substring(0,lowerBoundString.length()-1)+"];";
+		pw.println(lowerBoundString);
+		// se imprimen los higher bounds
 		String upperBoundString = "ub = [";
 		for (int i = 0; i < variables.size(); i++) {
-			Bounding bounding = boundingConstraints.get(variables.get(i));
+			bounding = boundingConstraints.get(variables.get(i));
 			if (bounding == null) {
 				System.out.println("Null bounding for variable " + mIDToName.get(variables.get(i)));
 			}

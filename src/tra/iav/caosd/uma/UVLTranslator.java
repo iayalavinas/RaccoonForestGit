@@ -13,8 +13,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import org.logicng.formulas.CType;
 import org.logicng.formulas.Formula;
 import org.logicng.formulas.FormulaFactory;
+import org.logicng.formulas.Literal;
 import org.logicng.transformations.cnf.TseitinTransformation;
 
 import de.vill.model.Feature;
@@ -37,9 +39,12 @@ import de.vill.model.constraint.NotConstraint;
 import de.vill.model.constraint.NotEqualsEquationConstraint;
 import de.vill.model.constraint.OrConstraint;
 import de.vill.model.constraint.ParenthesisConstraint;
+import de.vill.model.expression.AddExpression;
 import de.vill.model.expression.Expression;
 import de.vill.model.expression.LiteralExpression;
 import de.vill.model.expression.NumberExpression;
+import de.vill.model.expression.ParenthesisExpression;
+import de.vill.model.expression.SubExpression;
 import ilp.iav.caosd.uma.Bounding;
 import ilp.iav.caosd.uma.Comparator;
 import ilp.iav.caosd.uma.ILPProblem;
@@ -318,13 +323,14 @@ public class UVLTranslator {
 	private void processBoundingConstraint(AndConstraint cons) {			
 		Integer variableIndex=getVariableIndex(cons);
 		Bounding bound=new Bounding();
-		Integer upperBound=bound.getMax();
 		getBounding(cons.getLeft(), bound);
 		getBounding(cons.getRight(),bound);
-		//System.out.println(variableIndex+" "+bound.toString());
+		System.out.println(variableIndex+" "+bound.toString());
 		originalBounding.put(variableIndex, bound);
+		Integer upperBound=bound.getMax();
 		if (bound.getMin() != 0) {
 			upperBound = upperBound - bound.getMin() + 1;
+			System.out.println("El upper bound queda "+upperBound);
 		}
 		problem.addBoundingConstraint(variableIndex, 0, upperBound);
 	}
@@ -334,11 +340,11 @@ public class UVLTranslator {
 		FormulaFactory f = new FormulaFactory();
 		TseitinTransformation tseitinTrans = new TseitinTransformation();
 		for (int i = 0; i < temporalConstraintList.size(); i++) {
-			if (temporalConstraintList.get(i) instanceof ExpressionConstraint) {
+			//*if (temporalConstraintList.get(i) instanceof ExpressionConstraint) {
 				// TO-DO: Transforamcion de expression constraint entre características a
 				// expresión lineal
 				// transformExpressionConstraint((ExpressionConstraint)temporalConstraintList.get(i));
-			} else {
+			//*} else {
 				// System.out.println("Antes: "+temporalConstraintList.get(i));
 				if (!isBoundingConstraint(temporalConstraintList.get(i))) {
 					temp = translateFormula(temporalConstraintList.get(i), f);
@@ -348,7 +354,7 @@ public class UVLTranslator {
 					// debemos obtener todas las conjunciones y meterlas una a una.
 					transformInLC(transformed.toString());
 				}
-			}
+			//*}
 		}
 
 	}
@@ -405,6 +411,91 @@ public class UVLTranslator {
 			numNegatives = 0;
 		}
 	}
+	
+	// this method normalize expression constraint to have all the number expression in the right side of the expression.
+	private ExpressionConstraint normalizeExpressionConstraint(ExpressionConstraint cons) {
+		ExpressionConstraint res=cons;
+		System.out.println("Antes de normalizar "+res);
+		if(!(cons.getRight() instanceof NumberExpression)) {
+			// se pasa todo al otro lado.
+			SubExpression se=new SubExpression(cons.getLeft(), cons.getRight());
+			NumberExpression ne=new NumberExpression(0);
+			if(cons instanceof EqualEquationConstraint) {
+				res=new EqualEquationConstraint(se,ne);
+			}else if(cons instanceof GreaterEquationConstraint) {
+				res=new GreaterEquationConstraint(se, ne);
+			}else if(cons instanceof GreaterEqualsEquationConstraint) {
+				res=new GreaterEqualsEquationConstraint(se, ne);
+			}else if(cons instanceof LowerEqualsEquationConstraint) {
+				res=new LowerEqualsEquationConstraint(se, ne);
+			}else if(cons instanceof LowerEquationConstraint) {
+				res=new LowerEquationConstraint(se, ne);
+			}else if(cons instanceof NotEqualsEquationConstraint) {
+				res=new NotEqualsEquationConstraint(se, ne);
+			}
+		}
+		System.out.println("Despues de normalizar: "+res);
+		return res;
+	}
+	
+	private void getLiteral(Expression exp, List<Literal> litList, List<Integer> listCoef, FormulaFactory fac,
+			Integer coef) {
+		Literal lit;
+		if (exp instanceof AddExpression) {
+			List<Expression> part = exp.getExpressionSubParts();
+			for (int i = 0; i < part.size(); i++) {
+				getLiteral(part.get(i), litList, listCoef, fac, coef);
+
+			}
+		} else if (exp instanceof SubExpression) {
+			Expression minuendo = exp.getExpressionSubParts().get(0);
+			getLiteral(minuendo, litList, listCoef, fac, coef);
+			Expression sustraendo = exp.getExpressionSubParts().get(1);
+			getLiteral(sustraendo, litList, listCoef, fac, -coef);		
+		} else if (exp instanceof ParenthesisExpression) {
+			List<Expression> expList = ((ParenthesisExpression) exp).getExpressionSubParts();
+			for (Expression inExp : expList) {
+				getLiteral(inExp, litList, listCoef, fac, coef);
+			}
+		} else if (exp instanceof LiteralExpression) {
+			lit = fac.variable(((LiteralExpression) exp).getFeature().getFeatureName());
+			litList.add(lit);
+			listCoef.add(coef);
+		}
+	}
+	
+	private CType getComparator(ExpressionConstraint cons) {
+		CType res=null;
+		if(cons instanceof EqualEquationConstraint) {
+			res=CType.EQ;
+		}else if(cons instanceof GreaterEqualsEquationConstraint) {
+			res=CType.GE;
+		}else if(cons instanceof GreaterEquationConstraint) {
+			res=CType.GT;
+		}else if(cons instanceof LowerEqualsEquationConstraint) {
+			res=CType.LE;
+		}else if(cons instanceof LowerEquationConstraint) {
+			res=CType.LT;
+		}
+		return res;
+	}
+	
+	// se usan pseudobooelan constraint para codificar -> tenemos que sacar la lista de literales.
+	// recuerda que se pasa una expresión normalizada, hay números a la derecha, y expresiones a la izquierda que pueden ser 
+	// sumas o restas.
+	private Formula transformCardinalityConstraint(ExpressionConstraint cons,FormulaFactory fac) {
+		Formula res=null;
+		List<Literal> lit=new LinkedList<Literal>();
+		List<Integer> coef=new LinkedList<Integer>();
+		getLiteral((Expression)cons.getLeft(),lit,coef,fac,1);
+		// se obtiene el valor de la number expression del lado derecho.
+		NumberExpression numExp=(NumberExpression)cons.getRight();
+		int val=(int) Math.round(numExp.getNumber());
+		CType cmp=getComparator(cons);	
+		res=fac.pbc(cmp, val, lit, coef);
+		System.out.println("Antes de pasar a CNF: "+res);
+		return res.cnf();
+	}
 
 	private Formula translateFormula(Constraint cons, FormulaFactory factory) {
 		Formula res = null;
@@ -432,6 +523,10 @@ public class UVLTranslator {
 		} else if (cons instanceof ParenthesisConstraint) {
 			ParenthesisConstraint par = (ParenthesisConstraint) cons;
 			res = translateFormula(par.getContent(), factory);
+		}else if (cons instanceof ExpressionConstraint) {
+			cons=normalizeExpressionConstraint((ExpressionConstraint)cons);
+			res=transformCardinalityConstraint((ExpressionConstraint)cons, factory);
+			System.out.println("La formula resultante es: "+res.toString());
 		}
 		return res;
 	}
@@ -1346,36 +1441,9 @@ public class UVLTranslator {
 				texto = br.readLine();
 				index++;
 			}
-			// visualización de los resultados.
-			// TO-DO: generar configuración de UVLS
-//			for (int j = 0; j < variables.size(); j++) {
-//				// Se extrae el nombre del objeto en su estructura.
-//				Object name = mIDToName.get(variables.get(j));
-//				if (name instanceof String) {
-//					// se obtiene el elemento intencional
-//					/*IStarEntity entity = goalModel.getEntity((String) name);
-//					if (entity != null) {
-//						System.out.println(
-//								entity.getText() + "(" + variables.get(j) + ")" + ":" + resList.get(variables.get(j)));
-//					}*/
-//				} else {
-//					String featureName = featureModel.getName((Integer) name);
-//					if (featureName != null) {
-//						System.out.println(
-//								featureName + "(" + variables.get(j) + ")" + ":" + resList.get(variables.get(j)));
-//					} else {
-//						System.out.println("Index de la variable ficticia " + variables.get(j) + " y nombre "
-//								+ mIDToName.get(variables.get(j)));
-//
-//					}
-//				}
-//			}
-//			br.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -1588,7 +1656,7 @@ public class UVLTranslator {
 			spaces = spaces + "  ";
 			while (!line.trim().equals("constraints")) {
 
-				if (!ignoreList.contains(line.trim())) {
+				if (!ignoreList.contains(line.trim()) && !line.trim().startsWith("[")) {
 					// line contiene una línea del fichero uvl
 
 					String newPart = composeJSONEntry(line, resConf);
